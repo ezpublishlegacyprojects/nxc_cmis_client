@@ -32,7 +32,6 @@ include_once( eZExtension::baseDirectory() . '/nxc_cmisclient/classes/nxccmisobj
 
 class eZCMISObject
 {
-
     /**
      * Fetches eZContentObject by \a $uri to fetch cmis entry
      *

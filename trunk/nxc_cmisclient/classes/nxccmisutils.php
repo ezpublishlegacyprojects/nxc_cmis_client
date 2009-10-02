@@ -612,7 +612,7 @@ class nxcCMISUtils
              $url = self::getEndPoint();
          }
 
-         return preg_match( "/.*:([0-9]+)/", $url, $regs ) ? $regs[0] : '';
+         return preg_match( "/^(http|https):\/\/.+?\//", $url, $regs ) ? $regs[0] : '';
      }
 
      /**
@@ -644,7 +644,7 @@ class nxcCMISUtils
      {
          $host = self::getHost( $uri );
 
-         return !empty( $host ) ? str_replace( $host . '/', '', $uri ) : $uri;
+         return !empty( $host ) ? str_replace( $host, '', $uri ) : $uri;
      }
 
      /**
