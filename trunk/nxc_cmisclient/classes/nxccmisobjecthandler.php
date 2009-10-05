@@ -274,7 +274,7 @@ class nxcCMISObjectHandler
      *
      * @return Path list with uri and text
      */
-    public function getBreadCrumbs( $browserView = 'cmis/browser' )
+    public function getBreadCrumbs( $browserView = 'cmis_client/browser' )
     {
         $pathList = array();
         $object = $this->getObject();

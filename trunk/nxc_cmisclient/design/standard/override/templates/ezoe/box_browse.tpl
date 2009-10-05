@@ -5,14 +5,14 @@
 eZOEPopupUtils.cmisBrowse = function( uri, offset )
 {
     // browse for a specific node id and a offset on the child elements
-    eZOEPopupUtils.ajax.load( "{/literal}{"cmis/expand/"|ezurl( no )}{literal}" + '/(uri)/' + ( uri || '' ) + '/(offset)/' + (offset || 0), '', eZOEPopupUtils.cmisBrowseCallBack );
+    eZOEPopupUtils.ajax.load( "{/literal}{"cmis_client/expand/"|ezurl( no )}{literal}" + '/(uri)/' + ( uri || '' ) + '/(offset)/' + (offset || 0), '', eZOEPopupUtils.cmisBrowseCallBack );
     ez.$('browse_progress' ).show();
 };
 
 eZOEPopupUtils.selectByCMISEmbedURI = function( uri )
 {
     var s = tinyMCEPopup.editor.settings;
-    window.location ={/literal}'{'cmis/relations/'|ezurl( no )}{literal}/' + s.ez_contentobject_id + '/' + s.ez_contentobject_version + '/(uri)/' + uri;
+    window.location ={/literal}'{'cmis_client/relations/'|ezurl( no )}{literal}/' + s.ez_contentobject_id + '/' + s.ez_contentobject_version + '/(uri)/' + uri;
 };
 
 {/literal}

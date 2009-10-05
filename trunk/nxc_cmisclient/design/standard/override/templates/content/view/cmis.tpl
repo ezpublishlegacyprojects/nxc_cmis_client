@@ -14,11 +14,11 @@
 
                         {def $cmis_object = fetch( 'cmis', 'object', hash( 'uri', $object.data_map.uri.content ) )}
                         {if $cmis_object}
-                            {include uri='design:cmis/view.tpl'
+                            {include uri='design:cmis_client/view.tpl'
                                      current_object=$cmis_object}
 
                             {if eq( $cmis_object.base_type, 'document' )}
-                                {$cmis_object.doc_type|mimetype_icon( small, $cmis_object.doc_type )} <a href={concat( 'cmis/download/', $cmis_object.self_uri )|ezurl}>{'Download'|i18n( 'cmis' )}</a>
+                                {$cmis_object.doc_type|mimetype_icon( small, $cmis_object.doc_type )} <a href={concat( 'cmis_client/download/', $cmis_object.self_uri )|ezurl}>{'Download'|i18n( 'cmis' )}</a>
                             {/if}
                         {else}
                             <div class="attribute-header">

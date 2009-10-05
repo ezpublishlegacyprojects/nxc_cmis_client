@@ -40,7 +40,7 @@ tinyMCEPopup.onInit.add( function(){
 {/literal}
 
 <div class="upload-view">
-    {def $cmis_url = concat( 'cmis/upload/', $object_id, '/', $object_version, '/auto/1' )|ezurl( no )
+    {def $cmis_url = concat( 'cmis_client/upload/', $object_id, '/', $object_version, '/auto/1' )|ezurl( no )
          $ezoe_url = concat( 'ezoe/upload/', $object_id, '/', $object_version, '/auto/1' )|ezurl( no )}
 
     <script type="text/javascript">

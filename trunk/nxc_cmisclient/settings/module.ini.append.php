@@ -2,6 +2,6 @@
 
 [ModuleSettings]
 ExtensionRepositories[]=nxc_cmisclient
-ModuleList[]=cmis
+ModuleList[]=cmis_client
 
 */ ?>

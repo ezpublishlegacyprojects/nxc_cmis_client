@@ -112,7 +112,7 @@ class nxcCMISUtils
         // Check if uri does not contain 'http'. If so prepend end point to it
         if ( !empty( $url ) and strpos( $url, 'http' ) === false )
         {
-            $url = self::getHost( self::getEndPoint() ) . '/' . $url;
+            $url = self::getHost( self::getEndPoint() ) . $url;
         }
 
         $response = self::httpRequest( $url, $method, $headers, $data );

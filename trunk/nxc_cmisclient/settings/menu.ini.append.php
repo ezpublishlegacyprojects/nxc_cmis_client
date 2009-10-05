@@ -8,10 +8,10 @@ Tabs[]=cmis
 
 [Topmenu_cmis]
 NavigationPartIdentifier=nxccmispart
-Name=CMIS
-Tooltip=CMIS
+Name=CMIS Client
+Tooltip=CMIS Client
 URL[]
-URL[default]=cmis/browser
+URL[default]=cmis_client/browser
 Enabled[]
 Enabled[default]=true
 Enabled[browse]=false

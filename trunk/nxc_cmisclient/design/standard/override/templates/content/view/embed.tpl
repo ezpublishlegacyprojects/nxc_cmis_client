@@ -7,9 +7,9 @@
     {/if}
 
     {if eq( $cmis_object.base_type, 'document' )}
-        <a href={concat( 'cmis/download/', $cmis_object.self_uri )|ezurl}>
+        <a href={concat( 'cmis_client/download/', $cmis_object.self_uri )|ezurl}>
     {else}
-        <a href={concat( 'cmis/browser/', $cmis_object.self_uri )|ezurl}>
+        <a href={concat( 'cmis_client/browser/', $cmis_object.self_uri )|ezurl}>
     {/if}
     {$cmis_object.title|wash}
     </a>
