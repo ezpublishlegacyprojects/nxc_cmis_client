@@ -1,4 +1,4 @@
-{def $cmis_object = fetch( 'cmis', 'object', hash( 'uri', $object.current.data_map.uri.content ) )}
+{def $cmis_object = fetch( 'cmis_client', 'object', hash( 'uri', $object.current.data_map.uri.content ) )}
 {if $cmis_object}
     {if eq( $cmis_object.doc_type, 'Space' )}
         {'folder'|class_icon( normal, $current_object.summary|wash )}

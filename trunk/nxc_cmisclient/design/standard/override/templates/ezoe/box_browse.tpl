@@ -43,7 +43,7 @@ eZOEPopupUtils.selectByCMISEmbedURI = function( uri )
 
         {if not( $embed_mode )}
             &nbsp;
-            {def $vendor = fetch( 'cmis', 'vendor_name' )}
+            {def $vendor = fetch( 'cmis_client', 'vendor_name' )}
             <a href="JavaScript:eZOEPopupUtils.cmisBrowse()" style="font-weight: bold">{if $vendor}{$vendor}{else}CMIS{/if}</a>
             {undef $vendor}
         {/if}

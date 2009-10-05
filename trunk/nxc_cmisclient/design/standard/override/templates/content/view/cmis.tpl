@@ -12,7 +12,7 @@
                 <div class="content-view-full">
                     <div class="class-{$object.class_identifier}">
 
-                        {def $cmis_object = fetch( 'cmis', 'object', hash( 'uri', $object.data_map.uri.content ) )}
+                        {def $cmis_object = fetch( 'cmis_client', 'object', hash( 'uri', $object.data_map.uri.content ) )}
                         {if $cmis_object}
                             {include uri='design:cmis_client/view.tpl'
                                      current_object=$cmis_object}

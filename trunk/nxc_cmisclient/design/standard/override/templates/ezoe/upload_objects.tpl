@@ -113,10 +113,10 @@ tinyMCEPopup.onInit.add( function(){
                         {/if}
                         {/foreach}
 
-                        {def $cmis_object = fetch( 'cmis', 'object', hash( 'uri', ezini( 'LocationSettings', 'RootNode', 'cmis.ini' ) ) )}
+                        {def $cmis_object = fetch( 'cmis_client', 'object', hash( 'uri', ezini( 'LocationSettings', 'RootNode', 'cmis.ini' ) ) )}
 
                         {if $cmis_object}
-                            {def $vendor = fetch( 'cmis', 'vendor_name' )}
+                            {def $vendor = fetch( 'cmis_client', 'vendor_name' )}
                             <option id="cmis" value="cmis_{$cmis_object.children_uri}">{if $vendor}{$vendor}{else}CMIS{/if}::{$cmis_object.title}</option>
                             {undef $vendor}
                         {/if}
