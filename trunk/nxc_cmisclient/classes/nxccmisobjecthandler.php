@@ -169,7 +169,9 @@ class nxcCMISObjectHandler
 
         if ( !$uri )
         {
-            if ( strpos( nxcCMISUtils::getRootFolderId(), 'http' ) === false )
+            $rootFolderId = nxcCMISUtils::getRootFolderId();
+            // Check if root folder id is not uri of root folder
+            if ( strpos( $rootFolderId, 'http' ) === false )
             {
                 $repositoryInfo = nxcCMISUtils::getRepositoryInfo();
                 if ( $repositoryInfo->children and !empty( $repositoryInfo->children ) )
@@ -182,7 +184,7 @@ class nxcCMISObjectHandler
             }
             else
             {
-                $response = nxcCMISUtils::invokeService( nxcCMISUtils::getRootFolderId() );
+                $response = nxcCMISUtils::invokeService( $rootFolderId );
                 $object = self::createObject( nxcCMISUtils::fetchEntry( $response ) );
             }
         }
