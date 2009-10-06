@@ -134,7 +134,7 @@ class nxcCMISBaseObject
     /**
      * Constructor.
      *
-     * @param stdClass $object
+     * @param SimpleXMLElement
      */
     public function __construct( SimpleXMLElement $entry = null )
     {
@@ -159,7 +159,7 @@ class nxcCMISBaseObject
         $this->Id = (string) nxcCMISUtils::getValue( $entry, 'id' );
         $this->Title = (string) nxcCMISUtils::getValue( $entry, 'title' );
         $this->Summary = (string) nxcCMISUtils::getValue( $entry, 'summary' );
-        $this->BaseType = (string) nxcCMISUtils::getXMLValue( $entry, 'cmis:object/cmis:properties/cmis:*[@cmis:name="BaseType"]/cmis:value' );
+        //$this->BaseType = (string) nxcCMISUtils::getXMLValue( $entry, 'cmis:object/cmis:properties/cmis:*[@cmis:name="BaseType"]/cmis:value' );
         $this->Author = (string) nxcCMISUtils::getValue( nxcCMISUtils::getValue( $entry, 'author' ), 'name' );
         $this->Updated = date_format( date_create( (string) nxcCMISUtils::getValue( $entry, 'updated' ) ), 'n/j/Y g:i A' );
         $this->SelfUri = nxcCMISUtils::getEncodedUri( nxcCMISUtils::getHostlessUri( nxcCMISUtils::getLinkUri( $entry, 'self' ) ) );
@@ -283,6 +283,14 @@ class nxcCMISBaseObject
     }
 
     /**
+     *?
+     */
+    public function setId( $id )
+    {
+        $this->Id = $id;
+    }
+
+    /**
      * @return Object name
      */
     public function getTitle()
@@ -313,6 +321,7 @@ class nxcCMISBaseObject
     {
         $this->Summary = $summary;
     }
+
     /**
      * @return Base object type
      */

@@ -31,6 +31,7 @@
 class nxcCMISUtils
 {
     const PROPERTY_TPL = 'cmis:object/cmis:properties/cmis:*[@cmis:name="%NAME%"]/cmis:value';
+    const COLLECTION_TPL = '/app:service/app:workspace/app:collection[@cmis:collectionType="%NAME%"]';
 
     /**
      * Logs in the user.
@@ -123,15 +124,11 @@ class nxcCMISUtils
 
             return $response->data;
         }
-        elseif ( $response->code == 301 or $response->code == 302 )
-        {
-            // @TODO: Handle it
-        }
         elseif ( $response->code == 204 )
         {
             return true;
         }
-        elseif ( ( $response->code == 403 ) or ( $response->code == 401 ) )
+        elseif ( in_array( $response->code, array( 403, 401, 302 ) ) )
         {
             // @TODO: Create custom exceptions
             throw new Exception( 'Access denied', 403 );
@@ -261,9 +258,9 @@ class nxcCMISUtils
              throw new Exception( ezi18n( 'cmis', 'Could not fetch repository info:'  ) . "\n$response" );
          }
 
-         $collectionRootChildren = self::processXML( $response, self::getVersionSpecificValue( '/app:service/app:workspace/app:collection[@cmis:collectionType="rootchildren"]' ) );
-         $collectionTypes = self::processXML( $response, self::getVersionSpecificValue( '/app:service/app:workspace/app:collection[@cmis:collectionType="typesdescendants"]' ) );
-         $collectionQuery = self::processXML( $response, self::getVersionSpecificValue( '/app:service/app:workspace/app:collection[@cmis:collectionType="query"]' ) );
+         $collectionRootChildren = self::processXML( $response, self::getVersionSpecificCollection( self::getVersionSpecificValue( 'rootchildren' ) ) );
+         $collectionTypes = self::processXML( $response, self::getVersionSpecificCollection( self::getVersionSpecificValue( 'typesdescendants' ) ) );
+         $collectionQuery = self::processXML( $response, self::getVersionSpecificCollection( self::getVersionSpecificValue( 'query' ) ) );
 
          $repository = new stdClass();
          $repository->repositoryId = (string) self::getXMLvalue( $repoInfo[0], 'cmis:repositoryId' );
@@ -374,18 +371,20 @@ class nxcCMISUtils
      {
          $versionSpecificValues = array( '/app:service/app:workspace/cmis:repositoryInfo'
                                             => array( '0.62' => '/app:service/app:workspace/cmisra:repositoryInfo' ),
-                                         '/app:service/app:workspace/app:collection[@cmis:collectionType="rootchildren"]'
-                                            => array( '0.62' => '/app:service/app:workspace/app:collection[@cmisra:collectionType="root"]' ),
-                                         '/app:service/app:workspace/app:collection[@cmis:collectionType="typesdescendants"]'
-                                            => array( '0.62' => '/app:service/app:workspace/app:collection[@cmisra:collectionType="types"]' ),
-                                         '/app:service/app:workspace/app:collection[@cmis:collectionType="query"]'
-                                            => array( '0.62' => '/app:service/app:workspace/app:collection[@cmisra:collectionType="query"]' ),
+                                         self::COLLECTION_TPL
+                                            => array( '0.62' => '/app:service/app:workspace/app:collection[@cmisra:collectionType="%NAME%"]' ),
+                                         'rootchildren'
+                                            => array( '0.62' => 'root' ),
+                                         'typesdescendants'
+                                            => array( '0.62' => 'types' ),
                                          '//cmis:typeId'
                                             => array( '0.62' => '//cmis:id' ),
                                          '//cmis:baseType'
                                             => array( '0.62' => '//cmis:baseTypeId' ),
                                          self::PROPERTY_TPL
                                             => array( '0.62' => 'cmisra:object/cmis:properties/cmis:*[@pdid="cmis:%NAME%"]/cmis:value' ),
+                                         'BaseType'
+                                            => array( '0.62' => 'BaseTypeId' ),
                                          '*[@rel="children"]'
                                             => array( '0.62' => '*[@rel="down"]' ),
                                          '*[@rel="parents"]'
@@ -394,6 +393,8 @@ class nxcCMISUtils
                                             => array( '0.62' => '*[@rel="down"]' ),
                                          'cmis:object'
                                             => array( '0.62' => 'cmisra:object' ),
+                                         'children_with_skip'
+                                            => array( '0.62' => false )
                                          );
 
          $currentVersion = self::getCMISVersionSupported();
@@ -406,11 +407,41 @@ class nxcCMISUtils
       *
       * @return string
       */
+     public static function getVersionSpecificValueByTpl( $name, $tpl, $tplValue = '%NAME%' )
+     {
+         $property = self::getVersionSpecificValue( $tpl );
+
+         return str_replace( $tplValue, $name, $property );
+     }
+
+     /**
+      * Provides version specific object property
+      *
+      * @return string
+      */
      public static function getVersionSpecificProperty( $name )
      {
-         $property = self::getVersionSpecificValue( self::PROPERTY_TPL );
+         return self::getVersionSpecificValueByTpl( $name, self::PROPERTY_TPL );
+     }
 
-         return str_replace( '%NAME%', $name, $property );
+     /**
+      * Provides version specific collection value
+      *
+      * @return string
+      */
+     public static function getVersionSpecificCollection( $name )
+     {
+         return self::getVersionSpecificValueByTpl( $name, self::COLLECTION_TPL );
+     }
+
+     /**
+      * Removes namespace \a $ns from \a $value
+      *
+      * @TODO: Is it needed to fetch all namespaces and remove it from the string?
+      */
+     public static function removeNameSpace( $value, $ns = 'cmis' )
+     {
+         return str_replace( $ns . ':', '', $value );
      }
 
      /**

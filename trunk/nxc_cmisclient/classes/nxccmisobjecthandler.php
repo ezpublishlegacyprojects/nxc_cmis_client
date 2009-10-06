@@ -46,9 +46,12 @@ class nxcCMISObjectHandler
      * Constructor
      * @param SimpleXMLElement $entry
      */
-    protected function __construct( $entry )
+    protected function __construct( $object )
     {
-        $this->Object = self::createObject( $entry );
+        if ( $object instanceof nxcCMISBaseObject )
+        {
+            $this->Object = $object;
+        }
     }
 
     /**
@@ -102,7 +105,7 @@ class nxcCMISObjectHandler
             else
             {
                 eZDebug::writeError( 'Could not find function : "' . get_class( $this ) . '::' . $functionName . '()".',
-                                     'nxcCMISObjectHandler::attribute()' );
+                                     __METHOD__ );
             }
 
             return $retVal;
@@ -111,7 +114,7 @@ class nxcCMISObjectHandler
         {
             if ( !$this->Object )
             {
-                eZDebug::writeError( "Attribute '$attr' does not exist", 'nxcCMISObjectHandler::attribute' );
+                eZDebug::writeError( "Attribute '$attr' does not exist", __METHOD__ );
                 $attrValue = null;
 
                 return $attrValue;
@@ -129,7 +132,7 @@ class nxcCMISObjectHandler
             else
             {
                 eZDebug::writeError( 'Could not find function : "' . get_class( $this->Object ) . '::' . $functionName . '()".',
-                                     'nxcCMISObjectHandler::attribute()' );
+                                     __METHOD__ );
             }
 
             return $retVal;
@@ -159,16 +162,37 @@ class nxcCMISObjectHandler
     public static function instance( $uri )
     {
         $name = __METHOD__ . '_' . $uri;
-        if ( !isset( $GLOBALS[$name] ) )
+        if ( isset( $GLOBALS[$name] ) )
         {
-            if ( !$uri )
-            {
-                $uri = nxcCMISUtils::getRootFolderId();
-            }
-
-            $response = nxcCMISUtils::invokeService( $uri );
-            $GLOBALS[$name] = new nxcCMISObjectHandler( nxcCMISUtils::fetchEntry( $response ) );
+            return $GLOBALS[$name];
         }
+
+        if ( !$uri )
+        {
+            if ( strpos( nxcCMISUtils::getRootFolderId(), 'http' ) === false )
+            {
+                $repositoryInfo = nxcCMISUtils::getRepositoryInfo();
+                if ( $repositoryInfo->children and !empty( $repositoryInfo->children ) )
+                {
+                    $object = self::createObjectByBaseType( 'folder' );
+                    $object->setChildrenUri( $repositoryInfo->children );
+                    $object->setTitle( $repositoryInfo->repositoryName );
+                    $object->setSummary( $repositoryInfo->repositoryDescription );
+                }
+            }
+            else
+            {
+                $response = nxcCMISUtils::invokeService( nxcCMISUtils::getRootFolderId() );
+                $object = self::createObject( nxcCMISUtils::fetchEntry( $response ) );
+            }
+        }
+        else
+        {
+            $response = nxcCMISUtils::invokeService( $uri );
+            $object = self::createObject( nxcCMISUtils::fetchEntry( $response ) );
+        }
+
+        $GLOBALS[$name] = new self( $object );
 
         return $GLOBALS[$name];
     }
@@ -203,14 +227,14 @@ class nxcCMISObjectHandler
             return false;
         }
 
-        $baseType = (string) nxcCMISUtils::getXMLValue( $entry, 'cmis:object/cmis:properties/cmis:*[@cmis:name="BaseType"]/cmis:value' );
+        $baseType = (string) nxcCMISUtils::getXMLValue( $entry, nxcCMISUtils::getVersionSpecificProperty( nxcCMISUtils::getVersionSpecificValue( 'BaseType' ) ) );
 
         if ( empty( $baseType ) )
         {
             throw new Exception( ezi18n( 'cmis', "Could not fetch 'BaseType'" ) );
         }
 
-        $object = self::createObjectByBaseType( $baseType );
+        $object = self::createObjectByBaseType( nxcCMISUtils::removeNameSpace( $baseType ) );
         $object->setFields( $entry );
 
         return $object;
@@ -260,7 +284,7 @@ class nxcCMISObjectHandler
         {
             foreach ( $children as $child )
             {
-                $list[] = new self( $child );
+                $list[] = new self( self::createObject( $child ) );
             }
 
             $GLOBALS[$name] = $list;
@@ -319,10 +343,10 @@ class nxcCMISObjectHandler
     public static function getCreateClasses()
     {
         // Define classes that can be created in "Create here" feature
-        $canCreateClasses = array( 'text' => 'Content', 'folder' => 'Folder' );
+        $canCreateClasses = array( 'content' => ezi18n( 'cmis', 'Content' ), 'folder' => ezi18n( 'cmis', 'Folder' ) );
         if ( ini_get( 'file_uploads' ) != 0 )
         {
-            $canCreateClasses['file'] = 'File';
+            $canCreateClasses['file'] = ezi18n( 'cmis', 'File' );
         }
 
         return $canCreateClasses;
@@ -341,7 +365,7 @@ class nxcCMISObjectHandler
         $classList = self::getCreateClasses();
         $classID = $this->getObject()->getClassIdentifier();
 
-        return isset( $classList[$classID] ) ? $classList[$classID] : $classList['file'];
+        return isset( $classList[$classID] ) ? $classID : 'file';
     }
 
     /**
@@ -375,16 +399,12 @@ class nxcCMISObjectHandler
     public static function search( $searchText, $limit = 20, $startPage = 1, $searchAllVersions = false, $includeAllAllowableActions = false, $includeRelationships = false )
     {
         $repositoryInfo = nxcCMISUtils::getRepositoryInfo();
-        if ( $repositoryInfo->query and empty( $repositoryInfo->query ) )
+        if ( !$repositoryInfo->query or empty( $repositoryInfo->query ) )
         {
             return array();
         }
 
         $uri = $repositoryInfo->query;
-        if ( !$uri )
-        {
-            return array();
-        }
 
         $doc = nxcCMISUtils::createDocument();
         $root =  nxcCMISUtils::createRootNode( $doc, 'cmis:query' );

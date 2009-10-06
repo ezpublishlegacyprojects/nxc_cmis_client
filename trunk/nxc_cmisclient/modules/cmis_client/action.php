@@ -54,7 +54,7 @@ if ( $http->hasPostVariable( 'RemoveButton' ) )
 }
 elseif ( $http->hasPostVariable( 'NewButton' ) )
 {
-    $classID = $http->hasPostVariable( 'ClassID' ) ? $http->postVariable( 'ClassID' ) : false;
+    $classID = $http->hasPostVariable( 'ClassID' ) ? strtolower( $http->postVariable( 'ClassID' ) ) : false;
     if ( !$classID or !$parentChildrenURI )
     {
         return $Module->redirectTo( $parentURI );

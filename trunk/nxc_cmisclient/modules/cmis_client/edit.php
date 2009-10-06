@@ -63,7 +63,7 @@ if ( $http->hasPostVariable( 'ConfirmButton' ) )
     $tpl->setVariable( 'desc', $desc );
     $editObject = false;
 
-    if ( strtolower( $classID ) == 'content' )
+    if ( $classID == 'content' )
     {
         $contentType = $http->hasPostVariable( 'AttributeContentType' ) ? $http->postVariable( 'AttributeContentType' ) : 'text/plain';
         $content = $http->hasPostVariable( 'AttributeContent' ) ? $http->postVariable( 'AttributeContent' ) : '';
@@ -78,11 +78,11 @@ if ( $http->hasPostVariable( 'ConfirmButton' ) )
             $editObject->setContent( $content );
         }
     }
-    elseif ( strtolower( $classID ) == 'folder' )
+    elseif ( $classID == 'folder' )
     {
         $editObject = $objectKey ? nxcCMISObjectHandler::instance( $objectKey )->getObject() : nxcCMISObjectHandler::createObjectByBaseType( 'folder' );
     }
-    elseif ( strtolower( $classID ) == 'file' )
+    elseif ( $classID == 'file' )
     {
         $attrName = 'AttributeFile';
         $canFetch = eZHTTPFile::canFetch( $attrName );
@@ -163,7 +163,7 @@ $object = false;
 if ( !$objectKey )
 {
     $supportedClasses = nxcCMISObjectHandler::getCreateClasses();
-    if ( !in_array( $classID, $supportedClasses ) )
+    if ( !isset( $supportedClasses[$classID] ) )
     {
         eZDebug::writeError( "Class ID ($classID) is not supported", $Module->functionURI( 'edit' ) );
 

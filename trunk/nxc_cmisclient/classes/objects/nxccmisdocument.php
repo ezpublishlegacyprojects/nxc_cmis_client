@@ -78,6 +78,16 @@ class nxcCMISDocument extends nxcCMISBaseObject
     /**
      * @reimp
      */
+    public function __construct( SimpleXMLElement $entry = null )
+    {
+        parent::__construct( $entry );
+
+        $this->BaseType = 'document';
+    }
+
+    /**
+     * @reimp
+     */
     public function setFields( $entry )
     {
         if ( !$entry )
@@ -190,7 +200,7 @@ class nxcCMISDocument extends nxcCMISBaseObject
      */
     public function getClassIdentifier()
     {
-        return strstr( $this->DocType, 'image' ) !== false ? 'image' : ( strstr( $this->DocType, 'text' ) !== false ? 'text' : 'file' );
+        return strstr( $this->DocType, 'image' ) !== false ? 'image' : ( strstr( $this->DocType, 'text' ) !== false ? 'content' : 'file' );
     }
 
     /**

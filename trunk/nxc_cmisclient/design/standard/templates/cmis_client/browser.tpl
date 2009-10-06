@@ -42,9 +42,6 @@
         {* DESIGN: Header END *}
 
         <form method="post" action={'cmis_client/action'|ezurl}>
-        {*<input type="hidden" name="CurrentObjectID" value="{$current_object.id}" />*}
-        {*<input type="hidden" name="CurrentObjectUri" value="{$current_object.self_uri}" />*}
-
 	<input type="hidden" name="CurrentSelfURI" value="{$current_object.self_uri}" />
         <input type="hidden" name="ParentSelfURI" value="{$current_object.parent_self_uri}" />
 	<input type="hidden" name="ParentChildrenURI" value="{$current_object.parent_children_uri}" />
@@ -120,61 +117,63 @@
 
 </div>
 
-{* Details window. *}
-<div class="context-block">
+{if $current_object.id}
+    {* Details window. *}
+    <div class="context-block">
 
-    {* DESIGN: Header START *}
-    <div class="box-header">
-        <div class="box-tc">
+        {* DESIGN: Header START *}
+        <div class="box-header">
+            <div class="box-tc">
+                <div class="box-ml">
+                    <div class="box-mr">
+                        <div class="box-tl">
+                            <div class="box-tr">
+                                <h2 class="context-title">{'Details'|i18n( 'design/admin/node/view/full' )}</h2>
+
+                                <div class="header-subline"></div>
+                                {* DESIGN: Header END *}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        {* DESIGN: Content START *}
+        <div class="box-bc">
             <div class="box-ml">
                 <div class="box-mr">
-                    <div class="box-tl">
-                        <div class="box-tr">
-                            <h2 class="context-title">{'Details'|i18n( 'design/admin/node/view/full' )}</h2>
+                    <div class="box-bl">
+                        <div class="box-br">
+                            <div class="box-content">
 
-                            <div class="header-subline"></div>
-                            {* DESIGN: Header END *}
+                                <table class="list" cellspacing="0">
+                                <tr>
+                                    <th>Id</th>
+                                    {if is_set( $current_object.size )}
+                                        <th>{'Size'|i18n( 'cmis' )}</th>
+                                    {/if}
+                                    <th>{'Author'|i18n( 'design/admin/node/view/full' )}</th>
+                                </tr>
+                                <tr class="bglight">
+                                    <td>{$current_object.id|wash}</td>
+                                    {if is_set( $current_object.size )}
+                                        <td>{$current_object.size|wash}</th>
+                                    {/if}
+
+                                    <td>{$current_object.author|wash}</td>
+                                </tr>
+                                </table>
+
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
+        {* DESIGN: Content END *}
     </div>
-
-    {* DESIGN: Content START *}
-    <div class="box-bc">
-        <div class="box-ml">
-            <div class="box-mr">
-                <div class="box-bl">
-                    <div class="box-br">
-                        <div class="box-content">
-
-                            <table class="list" cellspacing="0">
-                            <tr>
-                                <th>Id</th>
-                                {if is_set( $current_object.size )}
-                                    <th>{'Size'|i18n( 'cmis' )}</th>
-                                {/if}
-                                <th>{'Author'|i18n( 'design/admin/node/view/full' )}</th>
-                            </tr>
-                            <tr class="bglight">
-                                <td>{$current_object.id|wash}</td>
-                                {if is_set( $current_object.size )}
-                                    <td>{$current_object.size|wash}</th>
-                                {/if}
-
-                                <td>{$current_object.author|wash}</td>
-                            </tr>
-                            </table>
-
-                            {* DESIGN: Content END *}
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
+{/if} {* if $current_object.id *}
 
 {if eq( $current_object.base_type, 'folder' )}
     <form name="children" method="post" action={'cmis_client/action'|ezurl}>
@@ -338,9 +337,9 @@
                                         <div class="left">
 
                                             <select id="ClassID" name="ClassID" title="{'Use this menu to select the type of item you want to create then click the "Create here" button. The item will be created in the current location.'|i18n( 'design/admin/node/view/full' )|wash()}">
-                                            {foreach $current_object.can_create_classes as $class}
+                                            {foreach $current_object.can_create_classes as $key => $class}
 
-                                                <option value="{$class|wash()}">{$class|wash()}</option>
+                                                <option value="{$key|wash()}">{$class|wash()}</option>
 
                                             {/foreach}
                                             </select>

@@ -57,6 +57,17 @@ class nxcCMISFolder extends nxcCMISBaseObject
     /**
      * @reimp
      */
+    public function __construct( SimpleXMLElement $entry = null )
+    {
+        parent::__construct( $entry );
+
+        $this->DocType = 'Folder';
+        $this->BaseType = 'folder';
+    }
+
+    /**
+     * @reimp
+     */
     public function setFields( $entry )
     {
         if ( !$entry )
@@ -69,7 +80,6 @@ class nxcCMISFolder extends nxcCMISBaseObject
         $this->ChildrenUri = nxcCMISUtils::getEncodedUri( nxcCMISUtils::getHostlessUri( nxcCMISUtils::getLinkUri( $entry, 'children' ) ) );
         $this->DescendantsUri = nxcCMISUtils::getEncodedUri( nxcCMISUtils::getHostlessUri( nxcCMISUtils::getLinkUri( $entry, 'descendants' ) ) );
         $this->ParentId = (string) nxcCMISUtils::getXMLValue( $entry, nxcCMISUtils::getVersionSpecificProperty( 'parent_id' ) );
-        $this->DocType = 'Folder';
     }
 
     /**
@@ -111,8 +121,12 @@ class nxcCMISFolder extends nxcCMISBaseObject
         $entries = array();
 
         $childrenUri = nxcCMISUtils::getDecodedUri( $this->getChildrenUri() );
+        if ( !$childrenUri or empty( $childrenUri ) )
+        {
+            return $entries;
+        }
 
-        if ( nxcCMISUtils::getVersionSpecificProperty( 'children_with_skip' ) )
+        if ( nxcCMISUtils::getVersionSpecificValue( 'children_with_skip' ) )
         {
             // @TODO: Check skipCount and maxItems in 0.62                                                                                                      .
             $questionMark = strpos( $childrenUri, '?' ) === false ? '?' : '&';
@@ -128,9 +142,12 @@ class nxcCMISFolder extends nxcCMISBaseObject
                 if ( $id == $this->Id )
                 {
                     $uri = $childrenUri . '/' . $questionMark . 'skipCount=' . $offset . '&maxItems=' . $limit;
+                    $entries = nxcCMISUtils::fetchEntries( nxcCMISUtils::invokeService( $uri ) );
                 }
-
-                $entries = nxcCMISUtils::fetchEntries( nxcCMISUtils::invokeService( $uri ) );
+                else
+                {
+                    $entries = $entry;
+                }
             }
         }
         else
@@ -146,13 +163,20 @@ class nxcCMISFolder extends nxcCMISBaseObject
         return $entries;
     }
 
-
     /**
      * @return Document children
      */
     public function getChildrenUri()
     {
         return $this->ChildrenUri;
+    }
+
+    /**
+     * Sets children uri
+     */
+    public function setChildrenUri( $uri )
+    {
+        $this->ChildrenUri = nxcCMISUtils::getEncodedUri( $uri );
     }
 
     /**
@@ -250,6 +274,5 @@ class nxcCMISFolder extends nxcCMISBaseObject
 
         return ( is_bool( $response ) and $response ) ? true : false;
     }
-
 }
 ?>
