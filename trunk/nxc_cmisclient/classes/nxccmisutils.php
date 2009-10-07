@@ -53,7 +53,7 @@ class nxcCMISUtils
     /**
      * Logs out the user.
      *
-     * @TODO Logout from CMIS as well
+     * @TODO Logout from CMIS Repository as well
      */
     public static function logout()
     {
@@ -144,17 +144,9 @@ class nxcCMISUtils
     }
 
     /**
-     * Invoke Webscript based Service using curl apis.
-     * It is intended to be a utility function that handles authentication (basic, ticket),
-     * http headers (if necessary) and custom post ( cmisquery+xml, atom+xml etc.).
+     * Requests \a $url by HTTP \a $method, \a $headers and post \a $data
      *
-     * $serviceURL Alfreco webscript service url without /service or /wcservice prefix.
-     * $auth Option for service authentication.
-     * $headers Additional http headers for making the http call.
-     * 'ticket' is for ticket based, 'basic' for http basic authentication, 'refresh' for ticket based but with ticket refresh.
-     * $method
-     * $data
-     * $retry
+     * @return stdClass with data, code and error fields
      */
     public static function httpRequest( $url, $method = 'GET', $headers = array(), $data = null )
     {
@@ -385,12 +377,14 @@ class nxcCMISUtils
                                             => array( '0.62' => 'cmisra:object/cmis:properties/cmis:*[@pdid="cmis:%NAME%"]/cmis:value' ),
                                          'BaseType'
                                             => array( '0.62' => 'BaseTypeId' ),
-                                         '*[@rel="children"]'
-                                            => array( '0.62' => '*[@rel="down"]' ),
-                                         '*[@rel="parents"]'
-                                            => array( '0.62' => '*[@rel="up"]' ),
-                                         '*[@rel="descendants"]'
-                                            => array( '0.62' => '*[@rel="down"]' ),
+                                         'children'
+                                            => array( '0.62' => 'down' ),
+                                         'parents'
+                                            => array( '0.62' => 'up' ),
+                                         'descendants'
+                                            => array( '0.62' => 'down' ),
+                                         'type'
+                                            => array( '0.62' => 'describedby' ),
                                          'cmis:object'
                                             => array( '0.62' => 'cmisra:object' ),
                                          'children_with_skip'
@@ -497,7 +491,7 @@ class nxcCMISUtils
              return '';
          }
 
-         $name = __METHOD__ . $uri;
+         $name = __METHOD__ . $uri . $value;
          if ( isset( $GLOBALS[$name] ) )
          {
              return $GLOBALS[$name];
@@ -541,7 +535,6 @@ class nxcCMISUtils
          }
          catch ( Exception $e )
          {
-             //return '';
              throw new Exception( "Bad XML: '" . $xml . "'" );
          }
 

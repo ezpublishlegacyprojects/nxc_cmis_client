@@ -77,8 +77,8 @@ class nxcCMISFolder extends nxcCMISBaseObject
 
         parent::setFields( $entry );
 
-        $this->ChildrenUri = nxcCMISUtils::getEncodedUri( nxcCMISUtils::getHostlessUri( nxcCMISUtils::getLinkUri( $entry, 'children' ) ) );
-        $this->DescendantsUri = nxcCMISUtils::getEncodedUri( nxcCMISUtils::getHostlessUri( nxcCMISUtils::getLinkUri( $entry, 'descendants' ) ) );
+        $this->ChildrenUri = nxcCMISUtils::getEncodedUri( nxcCMISUtils::getHostlessUri( nxcCMISUtils::getLinkUri( $entry, nxcCMISUtils::getVersionSpecificValue( 'children' ) ) ) );
+        $this->DescendantsUri = nxcCMISUtils::getEncodedUri( nxcCMISUtils::getHostlessUri( nxcCMISUtils::getLinkUri( $entry, nxcCMISUtils::getVersionSpecificValue( 'descendants' ) ) ) );
         $this->ParentId = (string) nxcCMISUtils::getXMLValue( $entry, nxcCMISUtils::getVersionSpecificProperty( 'parent_id' ) );
     }
 
@@ -272,7 +272,7 @@ class nxcCMISFolder extends nxcCMISBaseObject
     {
         $response = nxcCMISUtils::invokeService( nxcCMISUtils::getDecodedUri( $this->DescendantsUri ), 'DELETE' );
 
-        return ( is_bool( $response ) and $response ) ? true : false;
+        return ( is_bool( $response ) and $response );
     }
 }
 ?>

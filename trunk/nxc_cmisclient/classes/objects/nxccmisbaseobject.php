@@ -159,6 +159,7 @@ class nxcCMISBaseObject
         $this->Id = (string) nxcCMISUtils::getValue( $entry, 'id' );
         $this->Title = (string) nxcCMISUtils::getValue( $entry, 'title' );
         $this->Summary = (string) nxcCMISUtils::getValue( $entry, 'summary' );
+        // Do not needed to fetch baseType there because each descendants of this class know about its base type
         //$this->BaseType = (string) nxcCMISUtils::getXMLValue( $entry, 'cmis:object/cmis:properties/cmis:*[@cmis:name="BaseType"]/cmis:value' );
         $this->Author = (string) nxcCMISUtils::getValue( nxcCMISUtils::getValue( $entry, 'author' ), 'name' );
         $this->Updated = date_format( date_create( (string) nxcCMISUtils::getValue( $entry, 'updated' ) ), 'n/j/Y g:i A' );
@@ -166,9 +167,9 @@ class nxcCMISBaseObject
         $this->EditUri = nxcCMISUtils::getEncodedUri( nxcCMISUtils::getHostlessUri( nxcCMISUtils::getLinkUri( $entry, 'edit' ) ) );
         $this->AllowableActionsUri = nxcCMISUtils::getEncodedUri( nxcCMISUtils::getHostlessUri( nxcCMISUtils::getLinkUri( $entry, 'allowableactions' ) ) );
         $this->RelationshipsUri = nxcCMISUtils::getEncodedUri( nxcCMISUtils::getHostlessUri( nxcCMISUtils::getLinkUri( $entry, 'relationships' ) ) );
-        $this->TypeUri = nxcCMISUtils::getEncodedUri( nxcCMISUtils::getHostlessUri( nxcCMISUtils::getLinkUri( $entry, 'type' ) ) );
+        $this->TypeUri = nxcCMISUtils::getEncodedUri( nxcCMISUtils::getHostlessUri( nxcCMISUtils::getLinkUri( $entry, nxcCMISUtils::getVersionSpecificValue( 'type' ) ) ) );
         $this->RepositoryUri = nxcCMISUtils::getEncodedUri( nxcCMISUtils::getHostlessUri( nxcCMISUtils::getLinkUri( $entry, 'repository' ) ) );
-        $this->ParentsUri = nxcCMISUtils::getEncodedUri( nxcCMISUtils::getHostlessUri( nxcCMISUtils::getLinkUri( $entry, 'parents' ) ) );
+        $this->ParentsUri = nxcCMISUtils::getEncodedUri( nxcCMISUtils::getHostlessUri( nxcCMISUtils::getLinkUri( $entry, nxcCMISUtils::getVersionSpecificValue( 'parents' ) ) ) );
     }
 
     /**
@@ -269,7 +270,7 @@ class nxcCMISBaseObject
      */
     public function getParentChildrenUri()
     {
-        $uri = nxcCMISUtils::fetchLinkValue( nxcCMISUtils::getDecodedUri( $this->ParentsUri ), 'children' );
+        $uri = nxcCMISUtils::fetchLinkValue( nxcCMISUtils::getDecodedUri( $this->ParentsUri ), nxcCMISUtils::getVersionSpecificValue( 'children' ) );
 
         return  $uri != nxcCMISUtils::getDecodedUri( $this->SelfUri ) ? nxcCMISUtils::getEncodedUri( $uri ) : '';
     }
@@ -280,14 +281,6 @@ class nxcCMISBaseObject
     public function getId()
     {
         return $this->Id;
-    }
-
-    /**
-     *?
-     */
-    public function setId( $id )
-    {
-        $this->Id = $id;
     }
 
     /**
@@ -389,7 +382,7 @@ class nxcCMISBaseObject
      */
     public function getParentList( $fromRoot = true )
     {
-        $name = __METHOD__ . '_' . $this->Id . $fromRoot;
+        $name = __METHOD__ . '_' . $this->SelfUri . $fromRoot;
         if ( isset( $GLOBALS[$name] ) )
         {
             return $GLOBALS[$name];
@@ -423,9 +416,12 @@ class nxcCMISBaseObject
             $parentsUri = $tmpParentsUri;
         }
 
-        $GLOBALS[$name] = $parentList;
+        if ( count( $parentList ) )
+        {
+            $GLOBALS[$name] = $parentList;
+        }
 
-        return $GLOBALS[$name];
+        return $parentList;
     }
 
     /**

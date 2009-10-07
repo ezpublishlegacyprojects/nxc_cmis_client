@@ -371,29 +371,6 @@ class nxcCMISObjectHandler
     }
 
     /**
-     * Searches text of objects in CMIS repository
-     *
-     * @param string keywords
-     * @param int number of page
-     * @param int limit items per page
-     * @return list of nxcCMISDocument objects
-     */
-    public static function openSearch( $searchText, $startPage = 1, $limit = 20 )
-    {
-        $items = nxcCMIS::openSearch( $searchText, $startPage, $limit );
-
-        $entries = isset( $items['entries'] ) ? $items['entries'] : array();
-        $objectList = array();
-        foreach ( $entries as $item )
-        {
-            $objectList[] = self::createObject( $item );
-        }
-
-        $items['entries'] = $objectList;
-        return $items;
-    }
-
-    /**
      * Makes query searching
      *
      * @return array of nxcCMISObjectHandler
@@ -433,22 +410,10 @@ class nxcCMISObjectHandler
         $objectList = array();
         foreach ( $entries as $entry )
         {
-            $objectList[] = new self( $entry );
+            $objectList[] = new self( self::createObject( $entry ) );
         }
 
         return $objectList;
-
-
-        $items = nxcCMIS::query( $searchText, $searchAllVersions, $includeAllAllowableActions, $includeRelationships, $startPage, $limit );
-        $entries = isset( $items['entries'] ) ? $items['entries'] : array();
-        $objectList = array();
-        foreach ( $entries as $item )
-        {
-            $objectList[] = self::createObject( $item );
-        }
-
-        $items['entries'] = $objectList;
-        return $items;
     }
 }
 ?>
