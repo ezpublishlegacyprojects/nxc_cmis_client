@@ -10,7 +10,7 @@
              width="200"}
 {/case}
 
-{case match='text'}
+{case match='content'}
     {include uri='design:cmis_client/view/full/text.tpl'
              current_object=$current_object}
 {/case}
