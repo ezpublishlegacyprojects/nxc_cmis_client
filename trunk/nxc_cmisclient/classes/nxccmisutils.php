@@ -562,7 +562,7 @@ class nxcCMISUtils
 
          $value = $entry->xpath( $xpath );
 
-         return isset( $value[0][0] ) ? $value[0][0] : null;
+         return isset( $value[0] ) ? $value[0] : null;
      }
 
      /**
