@@ -7,13 +7,5 @@
 1.06.09
 =======
 1. Fix issue: Cannot create xml content object. text/xml is replaced by application/octet-stream
-+2. Add google navigator for browesing. DONE
-+3. Add "show content" feature. DONE
-+4. Add "edit object" feature. UPDATE: not supported all properties. DONE
-+5. Add searching. DONE
 6. Add "move to" feature
-+7. Improve view of objects/folders. DONE
 8. Add properties to split view like in admin view
-+9. Fix issue: If name of file is reserved, like 'content'. Will not be able to fetch this object. DONE
-+10. Improve errors, get it more understabled. DONE
-+11. OOP while create/edit/remove, store(), ->remove() etc. DONE
