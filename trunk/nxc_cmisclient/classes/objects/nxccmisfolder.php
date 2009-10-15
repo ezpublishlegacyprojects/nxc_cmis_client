@@ -132,7 +132,8 @@ class nxcCMISFolder extends nxcCMISBaseObject
             $questionMark = strpos( $childrenUri, '?' ) === false ? '?' : '&';
             $uri = $childrenUri . $questionMark . 'skipCount=' . $offset . '&maxItems=' . $limit;
 
-            $entry = nxcCMISUtils::fetchEntries( nxcCMISUtils::invokeService( $uri ) );
+            $response = nxcCMISUtils::invokeService( $uri );
+            $entry = nxcCMISUtils::fetchEntries( $response );
 
             if ( isset( $entry[0] ) )
             {
@@ -142,7 +143,8 @@ class nxcCMISFolder extends nxcCMISBaseObject
                 if ( $id == $this->Id )
                 {
                     $uri = $childrenUri . '/' . $questionMark . 'skipCount=' . $offset . '&maxItems=' . $limit;
-                    $entries = nxcCMISUtils::fetchEntries( nxcCMISUtils::invokeService( $uri ) );
+                    $response = nxcCMISUtils::invokeService( $uri );
+                    $entries = nxcCMISUtils::fetchEntries( $response );
                 }
                 else
                 {
@@ -152,7 +154,8 @@ class nxcCMISFolder extends nxcCMISBaseObject
         }
         else
         {
-            $entries = nxcCMISUtils::fetchEntries( nxcCMISUtils::invokeService( $childrenUri ) );
+            $response = nxcCMISUtils::invokeService( $childrenUri );
+            $entries = nxcCMISUtils::fetchEntries( $response );
         }
 
         if ( count( $entries ) )

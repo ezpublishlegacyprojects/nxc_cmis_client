@@ -44,7 +44,8 @@ class nxcCMISObjectHandler
 
     /**
      * Constructor
-     * @param SimpleXMLElement $entry
+     *
+     * @param nxcCMISBaseObject
      */
     protected function __construct( $object )
     {
@@ -167,10 +168,13 @@ class nxcCMISObjectHandler
             return $GLOBALS[$name];
         }
 
+        $object = false;
+
         if ( !$uri )
         {
             $rootFolderId = nxcCMISUtils::getRootFolderId();
             // Check if root folder id is not uri of root folder
+            // @TODO Remove it after supported servers go to 0.62
             if ( strpos( $rootFolderId, 'http' ) === false )
             {
                 $repositoryInfo = nxcCMISUtils::getRepositoryInfo();
@@ -184,14 +188,15 @@ class nxcCMISObjectHandler
             }
             else
             {
-                $response = nxcCMISUtils::invokeService( $rootFolderId );
-                $object = self::createObject( nxcCMISUtils::fetchEntry( $response ) );
+                $uri = $rootFolderId;
             }
         }
-        else
+
+        if ( !$object and $uri )
         {
             $response = nxcCMISUtils::invokeService( $uri );
-            $object = self::createObject( nxcCMISUtils::fetchEntry( $response ) );
+            $entry = nxcCMISUtils::fetchEntry( $response ) ;
+            $object = self::createObject( $entry );
         }
 
         $GLOBALS[$name] = new self( $object );
@@ -236,7 +241,7 @@ class nxcCMISObjectHandler
             throw new Exception( ezi18n( 'cmis', "Could not fetch 'BaseType'" ) );
         }
 
-        $object = self::createObjectByBaseType( nxcCMISUtils::removeNameSpace( $baseType ) );
+        $object = self::createObjectByBaseType( nxcCMISUtils::removeNamespaces( $baseType ) );
         $object->setFields( $entry );
 
         return $object;
@@ -286,7 +291,8 @@ class nxcCMISObjectHandler
         {
             foreach ( $children as $child )
             {
-                $list[] = new self( self::createObject( $child ) );
+                $object = self::createObject( $child );
+                $list[] = new self( $object );
             }
 
             $GLOBALS[$name] = $list;
@@ -410,7 +416,8 @@ class nxcCMISObjectHandler
         $objectList = array();
         foreach ( $entries as $entry )
         {
-            $objectList[] = new self( self::createObject( $entry ) );
+            $object = self::createObject( $entry );
+            $objectList[] = new self( $object );
         }
 
         return $objectList;

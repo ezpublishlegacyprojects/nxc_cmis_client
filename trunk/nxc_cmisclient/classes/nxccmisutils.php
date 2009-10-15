@@ -130,16 +130,13 @@ class nxcCMISUtils
         }
         elseif ( in_array( $response->code, array( 403, 401, 302 ) ) )
         {
-            // @TODO: Create custom exceptions
-            throw new Exception( 'Access denied', 403 );
+            throw new Exception( ezi18n( 'cmis', 'Access denied' ), 403 );
         }
 
-        eZDebug::writeError( 'Failed to invoke service [' . $method . '] ' . $url . ' Code:' . $response->code . "\n" . $response->error, __METHOD__ );
+        $error = 'Failed to invoke service [' . $method . '] ' . $url . ' Code:' . $response->code . "\n" . $response->error;
+        eZDebug::writeError( $error, __METHOD__ );
 
-        // Do not need to throw exception there because the function can be called under tpl
-        // If so, execption will not be handled properly
-        //throw new Exception( 'Failed to invoke service [' . $method . '] ' . $url . ' Code:' . $response->code );
-
+//        throw new Exception( $error );
         return false;
     }
 
@@ -433,7 +430,7 @@ class nxcCMISUtils
       *
       * @TODO: Is it needed to fetch all namespaces and remove it from the string?
       */
-     public static function removeNameSpace( $value, $ns = 'cmis' )
+     public static function removeNamespaces( $value, $ns = 'cmis' )
      {
          return str_replace( $ns . ':', '', $value );
      }

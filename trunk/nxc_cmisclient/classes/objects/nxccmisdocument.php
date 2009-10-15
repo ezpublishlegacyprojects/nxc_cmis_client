@@ -204,14 +204,6 @@ class nxcCMISDocument extends nxcCMISBaseObject
     }
 
     /**
-     * @return url to CMIS icon
-     */
-    public function getIcon()
-    {
-        return $this->Icon;
-    }
-
-    /**
      * @reimp
      */
     public function update()
@@ -299,7 +291,7 @@ class nxcCMISDocument extends nxcCMISBaseObject
     {
         $response = nxcCMISUtils::invokeService( nxcCMISUtils::getDecodedUri( $this->SelfUri ), 'DELETE' );
 
-        return ( is_bool( $response ) and $response ) ? true : false;
+        return ( is_bool( $response ) and $response );
     }
 }
 ?>

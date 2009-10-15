@@ -393,7 +393,8 @@ class nxcCMISBaseObject
 
         while ( $parentsUri )
         {
-            $entry = nxcCMISUtils::fetchEntry( nxcCMISUtils::invokeService( $parentsUri ) );
+            $response = nxcCMISUtils::invokeService( $parentsUri );
+            $entry = nxcCMISUtils::fetchEntry( $response );
             if ( !$entry )
             {
                 break;
