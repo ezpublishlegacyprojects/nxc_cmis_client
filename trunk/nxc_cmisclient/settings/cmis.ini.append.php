@@ -6,9 +6,9 @@ EndPoint=http://localhost:8080/alfresco/service/api/repository
 
 # User name with default rights
 # If CMIS server returns 'access denied' the user will be asked to provide additional login/password
-DefaultUser=guest
+DefaultUser=admin
 # Anonymous password
-DefaultPassword=
+DefaultPassword=admin
 
 [eZPublishSettings]
 # It will be instantiated when any user tries to add cmis object to a document via ezoe

@@ -19,6 +19,8 @@ Install class
 2. Need to define location where objects of the class will be stored.
    If you want that default media root folder should be used
    keep cmis.ini[eZPublishSettings].ParentNodeID empty or update it by node id.
+3. [IMPORTANT] Add policy to Anonymous user to READ recently installed object (cmis_object)
+               and policy for cmis_client module with lo limitations.
 
 Using ezoe
 ----------
