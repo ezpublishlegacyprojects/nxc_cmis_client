@@ -159,6 +159,12 @@ class nxcCMISUtils
         curl_setopt( $session, CURLOPT_RETURNTRANSFER, true );
 
         $http = eZHTTPTool::instance();
+        // Check if it is not logged in
+        if ( !$http->hasSessionVariable( 'CMISUser' ) )
+        {
+            self::login();
+        }
+
         $user = $http->hasSessionVariable( 'CMISUser' ) ? $http->sessionVariable( 'CMISUser' ) : false;
         // @TODO: It is quite bad to store pass in session
         $password = $http->hasSessionVariable( 'CMISPassword' ) ? $http->sessionVariable( 'CMISPassword' ) : '';
