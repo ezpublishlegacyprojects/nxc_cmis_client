@@ -533,12 +533,15 @@ class nxcCMISUtils
 
          try
          {
+             // Need to skip amps if someone forgot it
+             $xml = str_replace( '& ', '&amp;', $xml );
+
              // @ prevents uneeded PHP wanrings
              $cmisService = @( new SimpleXMLElement( $xml ) );
          }
          catch ( Exception $e )
          {
-             throw new Exception( "Bad XML: '" . $xml . "'" );
+             throw new Exception( $e->getMessage() . ":\n " . $xml );
          }
 
          foreach( self::getNamespaceList() as $ns => $value )
