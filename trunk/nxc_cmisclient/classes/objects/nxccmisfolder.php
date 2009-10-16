@@ -224,9 +224,9 @@ class nxcCMISFolder extends nxcCMISBaseObject
         $doc = nxcCMISUtils::createDocument();
         $root = nxcCMISUtils::createRootNode( $doc, 'entry' );
         $doc->appendChild( $root );
-        $title = $doc->createElement( 'title', $this->Title );
+        $title = $doc->createElement( 'title', nxcCMISUtils::escapeXMLEntries( $this->Title ) );
         $root->appendChild( $title );
-        $summary = $doc->createElement( 'summary', $this->Summary );
+        $summary = $doc->createElement( 'summary', nxcCMISUtils::escapeXMLEntries( $this->Summary ) );
         $root->appendChild( $summary );
 
         $object = $doc->createElement( nxcCMISUtils::getVersionSpecificValue( 'cmis:object' ) );

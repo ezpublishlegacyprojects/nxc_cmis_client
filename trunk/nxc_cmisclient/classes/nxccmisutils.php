@@ -159,8 +159,8 @@ class nxcCMISUtils
         curl_setopt( $session, CURLOPT_RETURNTRANSFER, true );
 
         $http = eZHTTPTool::instance();
-        // Check if it is not logged in
-        if ( !$http->hasSessionVariable( 'CMISUser' ) )
+        // Check if the user is not logged in yet
+        if ( !$http->hasSessionVariable( 'CMISUser' ) or $http->sessionVariable( 'CMISUser' ) == '' )
         {
             self::login();
         }
@@ -296,7 +296,7 @@ class nxcCMISUtils
       */
      public static function getRootFolderId()
      {
-         $repositoryInfo = nxcCMISUtils::getRepositoryInfo();
+         $repositoryInfo = self::getRepositoryInfo();
 
          if ( !isset( $repositoryInfo->rootFolderId ) )
          {
@@ -329,7 +329,7 @@ class nxcCMISUtils
       */
      public static function getCMISTypes()
      {
-         $repositoryInfo = nxcCMISUtils::getRepositoryInfo();
+         $repositoryInfo = self::getRepositoryInfo();
 
          return $repositoryInfo->cmisTypes;
      }
@@ -448,7 +448,7 @@ class nxcCMISUtils
       */
      public static function fetchEntries( $xml, $name = 'entry' )
      {
-         return nxcCMISUtils::processXML( $xml, '//atom:' . $name );
+         return self::processXML( $xml, '//atom:' . $name );
      }
 
      /**
@@ -477,7 +477,7 @@ class nxcCMISUtils
 
          $linkXML = $entry->xpath( '*[@rel="' . $name . '"]' );
 
-         return isset( $linkXML[0] ) ? nxcCMISUtils::getXMLAttribute( $linkXML[0] , 'href' ) : '';
+         return isset( $linkXML[0] ) ? self::getXMLAttribute( $linkXML[0] , 'href' ) : '';
      }
 
      /**
@@ -507,7 +507,7 @@ class nxcCMISUtils
              $entry = self::fetchEntry( $xml );
              if ( $entry )
              {
-                 $result = self::getHostlessUri( nxcCMISUtils::getLinkUri( $entry, $value ) );
+                 $result = self::getHostlessUri( self::getLinkUri( $entry, $value ) );
                  $GLOBALS[$name] = $result;
              }
 
@@ -517,6 +517,17 @@ class nxcCMISUtils
          }
 
          return $result;
+     }
+
+     /**
+      * Escapes special xml chars
+      *
+      * @return string
+      */
+     public static function escapeXMLEntries( $value )
+     {
+         // Replace '&' by '&amp;'. But have to skip replacing if '&amp;' already exists
+         return str_replace( '&', '&amp;', str_replace( '&amp;', '&', $value ) );
      }
 
      /**
@@ -533,11 +544,8 @@ class nxcCMISUtils
 
          try
          {
-             // Need to skip amps if someone forgot it
-             $xml = str_replace( '& ', '&amp;', $xml );
-
              // @ prevents uneeded PHP wanrings
-             $cmisService = @( new SimpleXMLElement( $xml ) );
+             $cmisService = @( new SimpleXMLElement( self::escapeXMLEntries( $xml ) ) );
          }
          catch ( Exception $e )
          {
