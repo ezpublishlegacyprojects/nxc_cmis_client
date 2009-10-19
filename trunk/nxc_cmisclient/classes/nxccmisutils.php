@@ -557,9 +557,7 @@ class nxcCMISUtils
              $cmisService->registerXPathNamespace( $ns, $value );
          }
 
-         $entry = $cmisService->xpath( $xpath );
-
-         return $entry;
+         return $cmisService->xpath( $xpath );
      }
 
      /**
