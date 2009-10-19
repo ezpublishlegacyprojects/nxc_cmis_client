@@ -43,7 +43,7 @@ Using ezoe
 ----------
 1. Create/Edit eZ Publish object and click on 'Insert/Edit object' button in ezoe interface.
 2. On 'Upload' tab select needed file to upload and fill 'Name' and 'Description' attribtes if necessary.
-3. Select VENDOR_NAME location on drop down list 'Location'. It will be like 'Alfresco::Guest Home'
-4. Push	'upload local file' button.
-   If user has access to upload to Alfresco, the file will be uploaded to the repository,
+3. Select VENDOR_NAME location on drop down list 'Location'. It will be like 'VENDOR_NAME::Guest Home'
+4. Push 'upload local file' button.
+   If user has access to upload to repository, the file will be uploaded to the repository,
    based on it eZ Publish object will be created and returned to be used in the document.
