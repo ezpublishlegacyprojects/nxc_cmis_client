@@ -1,7 +1,7 @@
 <?php /*
 
 [CMISSettings]
-# URL to end point
+# URL to repository end point (getRepositoryInfo service)
 EndPoint=http://localhost:8080/alfresco/service/api/repository
 
 # User name with default rights

@@ -40,34 +40,26 @@ class nxcCMISUtils
      *
      * @return bool
      */
-    public static function login( $user = false, $password = false, $endPoint = false )
+    public static function login( $user = false, $password = false )
     {
-        $ini      = eZINI::instance( 'cmis.ini' );
-        $http     = eZHTTPTool::instance();
-        $user     = !$user     ? self::getDefaultUser()     : $user;
-        $password = !$password ? self::getDefaultPassword() : $password;
-        $endPoint = !$endPoint ? self::getEndPoint()        : $endPoint;
+        $http = eZHTTPTool::instance();
 
         $http->setSessionVariable( self::CMIS_USER, $user );
         // @TODO: It is quite bad to store the pass in session
         $http->setSessionVariable( self::CMIS_PASSWORD, $password );
-
-        return true;
     }
 
     /**
-     * Provides registered user name
+     * Provides registered user name.
+     * If no registred, default user will be returned
      *
-     * @return string|false
-     * @note If no value is registred it tries to register and check again
+     * @return string
      */
     protected static function getUser()
     {
         $http = eZHTTPTool::instance();
 
-        return $http->hasSessionVariable( self::CMIS_USER ) ?
-               $http->sessionVariable( self::CMIS_USER ) :
-               ( ( self::login() and $http->hasSessionVariable( self::CMIS_USER ) ) ? $http->sessionVariable( self::CMIS_USER ) : false );
+        return $http->hasSessionVariable( self::CMIS_USER ) ? $http->sessionVariable( self::CMIS_USER ) : self::getDefaultUser();
     }
 
     /**
@@ -77,24 +69,30 @@ class nxcCMISUtils
      */
     protected static function getDefaultUser()
     {
+        $name = __METHOD__;
+        if ( isset( $GLOBALS[$name] ) )
+        {
+            return $GLOBALS[$name];
+        }
+
         $ini = eZINI::instance( 'cmis.ini' );
 
-        return $ini->hasVariable( 'CMISSettings', 'DefaultUser' ) ? $ini->variable( 'CMISSettings', 'DefaultUser' ) : '';
+        $GLOBALS[$name] = $ini->hasVariable( 'CMISSettings', 'DefaultUser' ) ? $ini->variable( 'CMISSettings', 'DefaultUser' ) : '';
+
+        return $GLOBALS[$name];
     }
 
     /**
      * Provides registered password
+     * If no registred, default password will be returned
      *
-     * @return string|false
-     * @note If no value is registred it tries to register and check again
+     * @return string
      */
     protected static function getPassword()
     {
         $http = eZHTTPTool::instance();
 
-        return $http->hasSessionVariable( self::CMIS_PASSWORD ) ?
-               $http->sessionVariable( self::CMIS_PASSWORD ) :
-               ( ( self::login() and $http->hasSessionVariable( self::CMIS_PASSWORD ) ) ? $http->sessionVariable( self::CMIS_PASSWORD ) : false );
+        return $http->hasSessionVariable( self::CMIS_PASSWORD ) ? $http->sessionVariable( self::CMIS_PASSWORD ) : self::getDefaultPassword();
     }
 
     /**
@@ -104,9 +102,17 @@ class nxcCMISUtils
      */
     protected static function getDefaultPassword()
     {
+        $name = __METHOD__;
+        if ( isset( $GLOBALS[$name] ) )
+        {
+            return $GLOBALS[$name];
+        }
+
         $ini = eZINI::instance( 'cmis.ini' );
 
-        return $ini->hasVariable( 'CMISSettings', 'DefaultPassword' ) ? $ini->variable( 'CMISSettings', 'DefaultPassword' ) : '';
+        $GLOBALS[$name] = $ini->hasVariable( 'CMISSettings', 'DefaultPassword' ) ? $ini->variable( 'CMISSettings', 'DefaultPassword' ) : '';
+
+        return $GLOBALS[$name];
     }
 
     /**
@@ -127,10 +133,12 @@ class nxcCMISUtils
      */
     public static function getLoggedUserName()
     {
-        $user = self::getDefaultUser();
-        $storedUser = self::getUser();
+        $defaultUser = self::getDefaultUser();
+        $defaultPassword = self::getDefaultPassword();
+        $user = self::getUser();
+        $password = self::getPassword();
 
-        return ( $storedUser and $user != $storedUser ) ? $storedUser : '';
+        return ( $user == $defaultUser and $password == $defaultPassword ) ? '' : $user;
     }
 
     /**
@@ -141,7 +149,7 @@ class nxcCMISUtils
     public static function getEndPoint()
     {
         $name = __METHOD__;
-        if ( isset( $GLOBALS[$name] ) and $GLOBALS[$name] )
+        if ( isset( $GLOBALS[$name] ) )
         {
             return $GLOBALS[$name];
         }
@@ -224,7 +232,7 @@ class nxcCMISUtils
         $user = self::getUser();
         $password = self::getPassword();
 
-        if ( $user )
+        if ( $user and !empty( $user ) )
         {
             curl_setopt( $session, CURLOPT_USERPWD, "$user:$password" );
         }
