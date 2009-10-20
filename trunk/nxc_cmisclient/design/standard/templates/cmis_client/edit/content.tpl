@@ -100,30 +100,32 @@ function checkButtonState()
 
     <div class="controlbar">
 
-    {* DESIGN: Control bar START *}
-    <div class="box-bc">
-        <div class="box-ml">
-            <div class="box-mr">
-                <div class="box-tc">
-                    <div class="box-bl">
-                        <div class="box-br">
+        {* DESIGN: Control bar START *}
+        <div class="box-bc">
+            <div class="box-ml">
+                <div class="box-mr">
+                    <div class="box-tc">
+                        <div class="box-bl">
+                            <div class="box-br">
 
-                            <div class="block">
-                                <input id="ConfirmButton" class="button" type="submit" name="ConfirmButton" value="{'OK'|i18n( 'design/admin/node/removeobject' )}" {if and( not( $object ), not( $error_list ) )}disabled="disabled"{/if}/>
-                                <input type="submit" class="button" name="CancelButton" value="{'Cancel'|i18n( 'design/admin/node/removeobject' )}" title="{'Cancel the removal of locations.'|i18n( 'design/admin/node/removeobject' )}" />
-                                <input type="hidden" name="RedirectURI" value="{$redirect_uri}" />				
-                                {if $object}
-                                    <input type="hidden" name="SelfUri" value="{$object.self_uri}" />
-                                {/if}
+                                <div class="block">
+                                    <input id="ConfirmButton" class="button" type="submit" name="ConfirmButton" value="{'OK'|i18n( 'design/admin/node/removeobject' )}" {if and( not( $object ), not( $error_list ) )}disabled="disabled"{/if}/>
+                                    <input type="submit" class="button" name="CancelButton" value="{'Cancel'|i18n( 'design/admin/node/removeobject' )}" title="{'Cancel the removal of locations.'|i18n( 'design/admin/node/removeobject' )}" />
+                                    <input type="hidden" name="RedirectURI" value="{$redirect_uri}" />				
+                                    {if $object}
+                                        <input type="hidden" name="SelfUri" value="{$object.self_uri}" />
+                                    {/if}
+                                </div>
+
                             </div>
-
                         </div>
                     </div>
                 </div>
             </div>
         </div>
+        {* DESIGN: Control bar END *}
+
     </div>
-    {* DESIGN: Control bar END *}
 </div>
 
 </form>

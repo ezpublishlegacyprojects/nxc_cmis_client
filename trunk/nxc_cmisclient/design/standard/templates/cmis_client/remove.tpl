@@ -80,26 +80,28 @@
 
     <div class="controlbar">
 
-    {* DESIGN: Control bar START *}
-    <div class="box-bc">
-        <div class="box-ml">
-            <div class="box-mr">
-                <div class="box-tc">
-                    <div class="box-bl">
-                        <div class="box-br">
+        {* DESIGN: Control bar START *}
+        <div class="box-bc">
+            <div class="box-ml">
+                <div class="box-mr">
+                    <div class="box-tc">
+                        <div class="box-bl">
+                            <div class="box-br">
 
-                            <div class="block">
-                                <input class="button" type="submit" name="ConfirmButton" value="{'OK'|i18n( 'design/admin/node/removeobject' )}" />
-                                <input type="submit" class="button" name="CancelButton" value="{'Cancel'|i18n( 'design/admin/node/removeobject' )}" title="{'Cancel the removal of locations.'|i18n( 'design/admin/node/removeobject' )}" />
+                                <div class="block">
+                                    <input class="button" type="submit" name="ConfirmButton" value="{'OK'|i18n( 'design/admin/node/removeobject' )}" />
+                                    <input type="submit" class="button" name="CancelButton" value="{'Cancel'|i18n( 'design/admin/node/removeobject' )}" title="{'Cancel the removal of locations.'|i18n( 'design/admin/node/removeobject' )}" />
+                                </div>
+
                             </div>
-
                         </div>
                     </div>
                 </div>
             </div>
         </div>
+        {* DESIGN: Control bar END *}
+
     </div>
-    {* DESIGN: Control bar END *}
 </div>
 
 </form>
