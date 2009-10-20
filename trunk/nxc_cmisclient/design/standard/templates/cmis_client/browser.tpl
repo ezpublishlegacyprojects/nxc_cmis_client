@@ -71,9 +71,6 @@
             </div>
         </div>
 
-        {* Buttonbar for content window. *}
-        <div class="controlbar">
-
         {* DESIGN: Control bar START *}
         <div class="box-bc">
             <div class="box-ml">
