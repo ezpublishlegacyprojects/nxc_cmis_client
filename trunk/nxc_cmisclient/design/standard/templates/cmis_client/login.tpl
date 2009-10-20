@@ -29,8 +29,8 @@
                     <div class="box-tl">
                         <div class="box-tr">
                             {def $vendor = fetch( 'cmis_client', 'vendor_name' )
-                                 $vendor_name = $vendor|choose( 'CMIS', $vendor )}
-                            <h1 class="context-title">{'Log in to %vendor%'|i18n( 'cmis',,hash( '%vendor%', $vendor_name ) )}</h1>
+                                 $vendor_name = $vendor|choose( 'CMIS repository', $vendor )}
+                            <h1 class="context-title">{'Log in to %vendor%'|i18n( 'cmis',, hash( '%vendor%', $vendor_name ) )}</h1>
 
                             {undef $vendor $vendor_name}
 

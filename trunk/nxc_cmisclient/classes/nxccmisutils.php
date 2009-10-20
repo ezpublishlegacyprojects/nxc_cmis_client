@@ -30,24 +30,83 @@
 
 class nxcCMISUtils
 {
-    const PROPERTY_TPL = 'cmis:object/cmis:properties/cmis:*[@cmis:name="%NAME%"]/cmis:value';
+    const PROPERTY_TPL   = 'cmis:object/cmis:properties/cmis:*[@cmis:name="%NAME%"]/cmis:value';
     const COLLECTION_TPL = '/app:service/app:workspace/app:collection[@cmis:collectionType="%NAME%"]';
+    const CMIS_USER      = 'CMISUser';
+    const CMIS_PASSWORD  = 'CMISPassword';
 
     /**
-     * Logs in the user.
+     * Logs user to repository
      *
-     * @return String ticket
+     * @return bool
      */
     public static function login( $user = false, $password = false, $endPoint = false )
     {
         $ini      = eZINI::instance( 'cmis.ini' );
-        $user     = !$user     ? ( $ini->hasVariable( 'CMISSettings', 'DefaultUser' )     ? $ini->variable( 'CMISSettings', 'DefaultUser' )     : '' ) : $user;
-        $password = !$password ? ( $ini->hasVariable( 'CMISSettings', 'DefaultPassword' ) ? $ini->variable( 'CMISSettings', 'DefaultPassword' ) : '' ) : $password;
-        $endPoint = !$endPoint ? self::getEndPoint() : $endPoint;
         $http     = eZHTTPTool::instance();
+        $user     = !$user     ? self::getDefaultUser()     : $user;
+        $password = !$password ? self::getDefaultPassword() : $password;
+        $endPoint = !$endPoint ? self::getEndPoint()        : $endPoint;
 
-        $http->setSessionVariable( 'CMISUser', $user );
-        $http->setSessionVariable( 'CMISPassword', $password );
+        $http->setSessionVariable( self::CMIS_USER, $user );
+        // @TODO: It is quite bad to store the pass in session
+        $http->setSessionVariable( self::CMIS_PASSWORD, $password );
+
+        return true;
+    }
+
+    /**
+     * Provides registered user name
+     *
+     * @return string|false
+     * @note If no value is registred it tries to register and check again
+     */
+    protected static function getUser()
+    {
+        $http = eZHTTPTool::instance();
+
+        return $http->hasSessionVariable( self::CMIS_USER ) ?
+               $http->sessionVariable( self::CMIS_USER ) :
+               ( ( self::login() and $http->hasSessionVariable( self::CMIS_USER ) ) ? $http->sessionVariable( self::CMIS_USER ) : false );
+    }
+
+    /**
+     * Provides default user name for current repository
+     *
+     * @return string
+     */
+    protected static function getDefaultUser()
+    {
+        $ini = eZINI::instance( 'cmis.ini' );
+
+        return $ini->hasVariable( 'CMISSettings', 'DefaultUser' ) ? $ini->variable( 'CMISSettings', 'DefaultUser' ) : '';
+    }
+
+    /**
+     * Provides registered password
+     *
+     * @return string|false
+     * @note If no value is registred it tries to register and check again
+     */
+    protected static function getPassword()
+    {
+        $http = eZHTTPTool::instance();
+
+        return $http->hasSessionVariable( self::CMIS_PASSWORD ) ?
+               $http->sessionVariable( self::CMIS_PASSWORD ) :
+               ( ( self::login() and $http->hasSessionVariable( self::CMIS_PASSWORD ) ) ? $http->sessionVariable( self::CMIS_PASSWORD ) : false );
+    }
+
+    /**
+     * Provides default password for current repository
+     *
+     * @return string
+     */
+    protected static function getDefaultPassword()
+    {
+        $ini = eZINI::instance( 'cmis.ini' );
+
+        return $ini->hasVariable( 'CMISSettings', 'DefaultPassword' ) ? $ini->variable( 'CMISSettings', 'DefaultPassword' ) : '';
     }
 
     /**
@@ -59,8 +118,8 @@ class nxcCMISUtils
     {
         $http = eZHTTPTool::instance();
 
-        $http->removeSessionVariable( 'CMISUser' );
-        $http->removeSessionVariable( 'CMISPassword' );
+        $http->removeSessionVariable( self::CMIS_USER );
+        $http->removeSessionVariable( self::CMIS_PASSWORD );
     }
 
     /**
@@ -68,13 +127,10 @@ class nxcCMISUtils
      */
     public static function getLoggedUserName()
     {
-        $ini = eZINI::instance( 'cmis.ini' );
-        $http = eZHTTPTool::instance();
+        $user = self::getDefaultUser();
+        $storedUser = self::getUser();
 
-        $user = $ini->hasVariable( 'CMISSettings', 'DefaultUser' ) ? $ini->variable( 'CMISSettings', 'DefaultUser' ) : '';
-        $storedUser = $http->hasSessionVariable( 'CMISUser' ) ? $http->sessionVariable( 'CMISUser' ) : '';
-
-        return $user != $storedUser ? $storedUser : '' ;
+        return ( $storedUser and $user != $storedUser ) ? $storedUser : '';
     }
 
     /**
@@ -90,10 +146,17 @@ class nxcCMISUtils
             return $GLOBALS[$name];
         }
 
-        $ini = eZINI::instance( 'cmis.ini' );
-        $GLOBALS[$name] = $ini->hasVariable( 'CMISSettings', 'EndPoint' ) ? $ini->variable( 'CMISSettings', 'EndPoint' ) : false;
+        $endPoint = '';
 
-        return $GLOBALS[$name];
+        $ini = eZINI::instance( 'cmis.ini' );
+
+        if ( $ini->hasVariable( 'CMISSettings', 'EndPoint' ) )
+        {
+            $endPoint = $ini->variable( 'CMISSettings', 'EndPoint' );
+            $GLOBALS[$name] = $endPoint;
+        }
+
+        return $endPoint;
     }
 
     /**
@@ -158,16 +221,8 @@ class nxcCMISUtils
         curl_setopt( $session, CURLOPT_HEADER, false );
         curl_setopt( $session, CURLOPT_RETURNTRANSFER, true );
 
-        $http = eZHTTPTool::instance();
-        // Check if the user is not logged in yet
-        if ( !$http->hasSessionVariable( 'CMISUser' ) or $http->sessionVariable( 'CMISUser' ) == '' )
-        {
-            self::login();
-        }
-
-        $user = $http->hasSessionVariable( 'CMISUser' ) ? $http->sessionVariable( 'CMISUser' ) : false;
-        // @TODO: It is quite bad to store pass in session
-        $password = $http->hasSessionVariable( 'CMISPassword' ) ? $http->sessionVariable( 'CMISPassword' ) : '';
+        $user = self::getUser();
+        $password = self::getPassword();
 
         if ( $user )
         {

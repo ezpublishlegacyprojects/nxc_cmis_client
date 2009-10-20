@@ -50,7 +50,11 @@ if ( $http->hasPostVariable( 'LoginButton' ) )
     {
         nxcCMISUtils::login( $login, $password );
 
-        return $Module->redirectTo( $redirectionURI );
+        // Check if login settings are correct
+        if ( nxcCMISUtils::invokeService( nxcCMISUtils::getEndPoint() ) )
+        {
+            return $Module->redirectTo( $redirectionURI );
+        }
     }
     catch ( Exception $error )
     {
@@ -65,6 +69,13 @@ if ( $http->hasPostVariable( 'LoginButton' ) )
 
         eZDebug::writeError( $error->getMessage(), $Module->functionURI( 'login' ) );
     }
+}
+
+// If errors exist need to log out
+// otherwise wrong logged in user name will be displayed
+if ( count( $errorList ) )
+{
+    nxcCMISUtils::logout();
 }
 
 $tpl = templateInit();

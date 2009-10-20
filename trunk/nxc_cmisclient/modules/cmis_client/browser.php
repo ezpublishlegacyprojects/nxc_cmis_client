@@ -66,7 +66,7 @@ try
     }
     else
     {
-        $error = ezi18n( 'cmis', "Unable to get object from repository by key: '%id%'", false, array( '%id%' => $objectKey ) );
+        $error = ezi18n( 'cmis', "Unable to get object from repository by uri: '%id%'", false, array( '%id%' => $objectKey ) );
         $errorList[] = $error;
         eZDebug::writeError( $error );
     }
