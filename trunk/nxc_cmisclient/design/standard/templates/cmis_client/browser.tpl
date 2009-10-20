@@ -71,47 +71,50 @@
             </div>
         </div>
 
-        {* DESIGN: Control bar START *}
-        <div class="box-bc">
-            <div class="box-ml">
-                <div class="box-mr">
-                    <div class="box-tc">
-                        <div class="box-bl">
-                            <div class="box-br">
+        {* Buttonbar for content window. *}
+        <div class="controlbar">
 
-                                <div class="block">
+            {* DESIGN: Control bar START *}
+            <div class="box-bc">
+                <div class="box-ml">
+                    <div class="box-mr">
+                        <div class="box-tc">
+                            <div class="box-bl">
+                                <div class="box-br">
 
-                                    <div class="left">
-                                        {* Edit button. *}
-                                        <input class="button" type="submit" name="ActionEdit" value="{'Edit'|i18n( 'design/admin/node/view/full' )}" title="{'Edit the contents of this item.'|i18n( 'design/admin/node/view/full' )}" />
+                                    <div class="block">
 
-                                        {* Move button. *}
-                                        {*<input class="button" type="submit" name="MoveNodeButton" value="{'Move'|i18n( 'design/admin/node/view/full' )}" title="{'Move this item to another location.'|i18n( 'design/admin/node/view/full' )}" />*}
+                                        <div class="left">
+                                            {* Edit button. *}
+                                            <input class="button" type="submit" name="ActionEdit" value="{'Edit'|i18n( 'design/admin/node/view/full' )}" title="{'Edit the contents of this item.'|i18n( 'design/admin/node/view/full' )}" />
 
-                                        {* Remove button. *}
-                                        <input class="button" type="submit" name="ActionRemove" value="{'Remove'|i18n( 'design/admin/node/view/full' )}" title="{'Remove this item.'|i18n( 'design/admin/node/view/full' )}" />
+                                            {* Move button. *}
+                                            {*<input class="button" type="submit" name="MoveNodeButton" value="{'Move'|i18n( 'design/admin/node/view/full' )}" title="{'Move this item to another location.'|i18n( 'design/admin/node/view/full' )}" />*}
+
+                                            {* Remove button. *}
+                                            <input class="button" type="submit" name="ActionRemove" value="{'Remove'|i18n( 'design/admin/node/view/full' )}" title="{'Remove this item.'|i18n( 'design/admin/node/view/full' )}" />
+                                        </div>
+
+                                        {if eq( $current_object.base_type, 'document' )}
+                                            <div class="right">
+                                                {$current_object.doc_type|mimetype_icon( small, $current_object.doc_type )} <a href={concat( 'cmis_client/download/', $current_object.self_uri )|ezurl}>{'Download'|i18n( 'cmis' )}</a>
+                                            </div>
+                                        {/if}
+                                        <div class="break"></div>
+
                                     </div>
 
-                                    {if eq( $current_object.base_type, 'document' )}
-                                        <div class="right">
-                                            {$current_object.doc_type|mimetype_icon( small, $current_object.doc_type )} <a href={concat( 'cmis_client/download/', $current_object.self_uri )|ezurl}>{'Download'|i18n( 'cmis' )}</a>
-                                        </div>
-                                    {/if}
-                                    <div class="break"></div>
-
                                 </div>
-
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
+            {* DESIGN: Control bar END *}
+            </form>
         </div>
-        {* DESIGN: Control bar END *}
-        </form>
-    </div>
     {* Content window. END *}
-
+    </div>
 </div>
 
 {if $current_object.id}
