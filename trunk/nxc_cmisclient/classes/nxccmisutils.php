@@ -40,7 +40,7 @@ class nxcCMISUtils
      *
      * @return bool
      */
-    public static function login( $user = false, $password = false )
+    public static function login( $user, $password = '' )
     {
         $http = eZHTTPTool::instance();
 
