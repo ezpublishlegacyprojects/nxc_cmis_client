@@ -20,7 +20,7 @@
 
 class nxc_cmisclientInfo
 {
-    function info()
+    static function info()
     {
         return array( 'Name' => "NXC CMIS Client extension",
                       'Version' => "0.5",
