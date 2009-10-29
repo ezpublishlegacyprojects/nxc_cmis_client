@@ -26,7 +26,7 @@
  * @file function_definition.php
  */
 
-include_once( eZExtension::baseDirectory() . '/nxc_cmisclient/modules/cmis_client/nxccmisfunctioncollection.php' );
+//include_once( eZExtension::baseDirectory() . '/nxc_cmisclient/modules/cmis_client/nxccmisfunctioncollection.php' );
 
 $FunctionList = array();
 $FunctionList['logged_username'] = array( 'name' => 'logged_username',

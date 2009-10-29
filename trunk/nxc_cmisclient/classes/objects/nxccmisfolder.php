@@ -28,8 +28,8 @@
  * @file nxccmisfolder.php
  */
 
-include_once( eZExtension::baseDirectory() . '/nxc_cmisclient/classes/objects/nxccmisbaseobject.php' );
-include_once( eZExtension::baseDirectory() . '/nxc_cmisclient/classes/nxccmisutils.php' );
+//include_once( eZExtension::baseDirectory() . '/nxc_cmisclient/classes/objects/nxccmisbaseobject.php' );
+//include_once( eZExtension::baseDirectory() . '/nxc_cmisclient/classes/nxccmisutils.php' );
 
 class nxcCMISFolder extends nxcCMISBaseObject
 {

@@ -28,7 +28,7 @@
  * @file ezcmisobject.php
  */
 
-include_once( eZExtension::baseDirectory() . '/nxc_cmisclient/classes/nxccmisobjecthandler.php' );
+//include_once( eZExtension::baseDirectory() . '/nxc_cmisclient/classes/nxccmisobjecthandler.php' );
 
 class eZCMISObject
 {

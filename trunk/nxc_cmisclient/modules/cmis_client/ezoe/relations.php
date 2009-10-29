@@ -29,7 +29,7 @@
  * @file relations.php
  */
 
-include_once( eZExtension::baseDirectory() . '/nxc_cmisclient/classes/ezcmisobject.php' );
+//include_once( eZExtension::baseDirectory() . '/nxc_cmisclient/classes/ezcmisobject.php' );
 
 $Module         = $Params['Module'];
 $objectID       = isset( $Params['ObjectID'] )      ? (int) $Params['ObjectID']      : 0;

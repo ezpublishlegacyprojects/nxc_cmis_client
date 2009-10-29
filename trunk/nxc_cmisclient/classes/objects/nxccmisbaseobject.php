@@ -28,7 +28,7 @@
  * @file nxccmisbaseobject.php
  */
 
-include_once( eZExtension::baseDirectory() . '/nxc_cmisclient/classes/nxccmisutils.php' );
+//include_once( eZExtension::baseDirectory() . '/nxc_cmisclient/classes/nxccmisutils.php' );
 
 class nxcCMISBaseObject
 {
@@ -129,7 +129,6 @@ class nxcCMISBaseObject
      * @var string
      */
     protected $ParentsUri = null;
-
 
     /**
      * Constructor.

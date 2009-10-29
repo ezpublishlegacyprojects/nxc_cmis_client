@@ -24,7 +24,7 @@
  * Downloader of repository objects
  */
 
-include_once( eZExtension::baseDirectory() . '/nxc_cmisclient/classes/nxccmisobjecthandler.php' );
+//include_once( eZExtension::baseDirectory() . '/nxc_cmisclient/classes/nxccmisobjecthandler.php' );
 
 $Module = $Params["Module"];
 $objectKey = nxcCMISUtils::getDecodedUri( implode( '/', $Module->ViewParameters ) );

@@ -29,9 +29,9 @@
  * @file nxccmisobjecthandler.php
  */
 
-include_once( eZExtension::baseDirectory() . '/nxc_cmisclient/classes/nxccmisutils.php' );
-include_once( eZExtension::baseDirectory() . '/nxc_cmisclient/classes/objects/nxccmisfolder.php' );
-include_once( eZExtension::baseDirectory() . '/nxc_cmisclient/classes/objects/nxccmisdocument.php' );
+//include_once( eZExtension::baseDirectory() . '/nxc_cmisclient/classes/nxccmisutils.php' );
+//include_once( eZExtension::baseDirectory() . '/nxc_cmisclient/classes/objects/nxccmisfolder.php' );
+//include_once( eZExtension::baseDirectory() . '/nxc_cmisclient/classes/objects/nxccmisdocument.php' );
 
 class nxcCMISObjectHandler
 {
@@ -234,7 +234,8 @@ class nxcCMISObjectHandler
             return false;
         }
 
-        $baseType = (string) nxcCMISUtils::getXMLValue( $entry, nxcCMISUtils::getVersionSpecificProperty( nxcCMISUtils::getVersionSpecificValue( 'BaseType' ) ) );
+        $baseTypeValue = nxcCMISUtils::getVersionSpecificValue( 'BaseType' );
+        $baseType = (string) nxcCMISUtils::getXMLValue( $entry, nxcCMISUtils::getVersionSpecificProperty( $baseTypeValue ) );
 
         if ( empty( $baseType ) )
         {

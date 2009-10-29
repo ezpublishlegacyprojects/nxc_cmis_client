@@ -28,7 +28,7 @@
  * @file nxccmisdocument.php
  */
 
-include_once( eZExtension::baseDirectory() . '/nxc_cmisclient/classes/objects/nxccmisbaseobject.php' );
+//include_once( eZExtension::baseDirectory() . '/nxc_cmisclient/classes/objects/nxccmisbaseobject.php' );
 
 class nxcCMISDocument extends nxcCMISBaseObject
 {

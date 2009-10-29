@@ -25,9 +25,9 @@
  */
 
 include_once( 'kernel/common/template.php' );
-include_once( eZExtension::baseDirectory() . '/nxc_cmisclient/classes/nxccmisobjecthandler.php' );
-include_once( eZExtension::baseDirectory() . '/nxc_cmisclient/classes/nxccmisutils.php' );
-include_once( eZExtension::baseDirectory() . '/nxc_cmisclient/classes/ezcmisobject.php' );
+//include_once( eZExtension::baseDirectory() . '/nxc_cmisclient/classes/nxccmisobjecthandler.php' );
+//include_once( eZExtension::baseDirectory() . '/nxc_cmisclient/classes/nxccmisutils.php' );
+//include_once( eZExtension::baseDirectory() . '/nxc_cmisclient/classes/ezcmisobject.php' );
 
 $Module = $Params['Module'];
 

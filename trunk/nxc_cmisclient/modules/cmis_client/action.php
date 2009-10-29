@@ -24,7 +24,7 @@
  * Actions for repository
  */
 
-include_once( eZExtension::baseDirectory() . '/nxc_cmisclient/classes/nxccmisutils.php' );
+//include_once( eZExtension::baseDirectory() . '/nxc_cmisclient/classes/nxccmisutils.php' );
 
 $http = eZHTTPTool::instance();
 $Module = $Params['Module'];

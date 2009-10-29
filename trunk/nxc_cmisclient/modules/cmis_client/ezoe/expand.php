@@ -24,8 +24,8 @@
  * Expand the children of a node with offset and limit as a json response for use in javascript
  */
 
-include_once( eZExtension::baseDirectory() . '/nxc_cmisclient/classes/nxccmisobjecthandler.php' );
-include_once( eZExtension::baseDirectory() . '/nxc_cmisclient/classes/nxccmisoeajaxcontent.php' );
+//include_once( eZExtension::baseDirectory() . '/nxc_cmisclient/classes/nxccmisobjecthandler.php' );
+//include_once( eZExtension::baseDirectory() . '/nxc_cmisclient/classes/nxccmisoeajaxcontent.php' );
 
 $Module         = $Params['Module'];
 $userParameters = $Params['UserParameters'];

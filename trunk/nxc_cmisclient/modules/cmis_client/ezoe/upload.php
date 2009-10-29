@@ -26,7 +26,7 @@
  * @file upload.php
  */
 
-include_once( eZExtension::baseDirectory() . '/nxc_cmisclient/classes/nxccmisobjecthandler.php' );
+//include_once( eZExtension::baseDirectory() . '/nxc_cmisclient/classes/nxccmisobjecthandler.php' );
 
 $Module        = $Params['Module'];
 $http          = eZHTTPTool::instance();

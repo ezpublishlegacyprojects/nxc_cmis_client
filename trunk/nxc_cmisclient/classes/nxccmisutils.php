@@ -171,6 +171,7 @@ class nxcCMISUtils
      * Invokes url
      *
      * @return string Response data
+     * @NOTE Be carful that this method is not called from tpls without try ... catch.
      */
     public static function invokeService( $url, $method = 'GET', $headers = array(), $data = null )
     {
@@ -204,11 +205,10 @@ class nxcCMISUtils
             throw new Exception( ezi18n( 'cmis', 'Access denied' ), 403 );
         }
 
-        $error = 'Failed to invoke service [' . $method . '] ' . $url . ' Code:' . $response->code . "\n" . $response->error;
+        $error = 'Failed to invoke service [' . $method . '] ' . self::getHostlessUri( $url ) . ' Code:' . $response->code . "\n" . $response->error;
         eZDebug::writeError( $error, __METHOD__ );
 
-//        throw new Exception( $error );
-        return false;
+        throw new Exception( $error );
     }
 
     /**

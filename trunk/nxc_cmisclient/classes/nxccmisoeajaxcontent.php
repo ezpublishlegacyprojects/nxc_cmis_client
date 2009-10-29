@@ -26,7 +26,7 @@
  * higher or fallback to php version if not present
  */
 
-include_once( eZExtension::baseDirectory() . '/nxc_cmisclient/classes/nxccmisobjecthandler.php' );
+//include_once( eZExtension::baseDirectory() . '/nxc_cmisclient/classes/nxccmisobjecthandler.php' );
 
 class nxcCMISOEAjaxContent
 {

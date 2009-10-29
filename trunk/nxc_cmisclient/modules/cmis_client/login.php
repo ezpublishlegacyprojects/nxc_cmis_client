@@ -27,7 +27,7 @@
  */
 
 include_once( 'kernel/common/template.php' );
-include_once( eZExtension::baseDirectory() . '/nxc_cmisclient/classes/nxccmisutils.php' );
+//include_once( eZExtension::baseDirectory() . '/nxc_cmisclient/classes/nxccmisutils.php' );
 
 $Module = $Params['Module'];
 $http = eZHTTPTool::instance();
