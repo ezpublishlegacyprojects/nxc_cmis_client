@@ -23,7 +23,7 @@ class nxc_cmisclientInfo
     function info()
     {
         return array( 'Name' => "NXC CMIS Client extension",
-                      'Version' => "0.4",
+                      'Version' => "0.5",
                       'Copyright' => "Copyright (C) 1999-2009 NX Consulting AS",
                       'License' => "GNU General Public License v2.0"
                      );
