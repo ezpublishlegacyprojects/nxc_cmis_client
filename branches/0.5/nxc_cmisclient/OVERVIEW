@@ -1,0 +1,49 @@
+LOGIN
+=====
+
+cmis.ini[CMISSettings] contains DefaultUser and DefaultPassword settings
+which define default access to CMIS server.
+If the server returns 'access denied' the user will be asked to provide additional login and password.
+
+EMBEDING
+========
+
+To add cmis object to a eZ Publish document via ezoe need to do following steps:
+
+Install class
+-------------
+1. Need to have a class which will be instatiated when user adds cmis object to a document via ezoe:
+   * Install cmis_object-1.0-1.ezpkg package.
+   * Or create new one. In this case cmis.ini[eZPublishSettings].ClassIdentifier is needed to be updated by new class identifier.
+     (The class must have 'title' and 'uri' attributes)
+2. Need to define location where objects of the class will be stored.
+   If you want that default media root folder should be used
+   keep cmis.ini[eZPublishSettings].ParentNodeID empty or update it by node id.
+3. [IMPORTANT] Add policy to Anonymous user to READ recently installed object (cmis_object)
+               and policy for cmis_client module with no limitations.
+
+Using ezoe
+----------
+1. Create/Edit eZ Publish object and click on 'Insert/Edit object' button in ezoe interface.
+2. Go to 'Browse' tab.
+3. On 'Browse' tab click on 'VENDOR_NAME' link (NOTE: VENODR_NAME is the name of CMIS vendor of you are using).
+4. Surf needed object and click on radiobutton. eZ Publish object of defined class will be created and returned to be used in the document.
+
+UPLOADING
+=========
+
+To upload file to repository via ezoe need to do following steps:
+
+Install location
+----------------
+- Need to define location in repository where files will be stored.
+  Edit cmis.ini[LocationSettings].RootNode by an object uri (NOTE: RootNode is the string that can be used to browse object via browser view of this extension)
+
+Using ezoe
+----------
+1. Create/Edit eZ Publish object and click on 'Insert/Edit object' button in ezoe interface.
+2. On 'Upload' tab select needed file to upload and fill 'Name' and 'Description' attribtes if necessary.
+3. Select VENDOR_NAME location on drop down list 'Location'. It will be like 'VENDOR_NAME::Guest Home'
+4. Push 'upload local file' button.
+   If user has access to upload to repository, the file will be uploaded to the repository,
+   based on it eZ Publish object will be created and returned to be used in the document.
