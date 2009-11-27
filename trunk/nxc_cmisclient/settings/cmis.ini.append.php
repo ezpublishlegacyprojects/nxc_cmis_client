@@ -2,7 +2,7 @@
 
 [CMISSettings]
 # URL to repository end point (getRepositoryInfo service)
-EndPoint=http://localhost:8080/alfresco/service/api/repository
+EndPoint=http://localhost:8080/alfresco/service/api/cmis
 
 # User name with default rights
 # If CMIS server returns 'access denied' the user will be asked to provide additional login/password
