@@ -172,23 +172,13 @@ class nxcCMISObjectHandler
 
         if ( !$uri )
         {
-            $rootFolderId = nxcCMISUtils::getRootFolderId();
-            // Check if root folder id is not uri of root folder
-            // @TODO Remove it after supported servers go to 0.62
-            if ( strpos( $rootFolderId, 'http' ) === false )
+            $repositoryInfo = nxcCMISUtils::getRepositoryInfo();
+            if ( $repositoryInfo->children and !empty( $repositoryInfo->children ) )
             {
-                $repositoryInfo = nxcCMISUtils::getRepositoryInfo();
-                if ( $repositoryInfo->children and !empty( $repositoryInfo->children ) )
-                {
-                    $object = self::createObjectByBaseType( 'folder' );
-                    $object->setChildrenUri( $repositoryInfo->children );
-                    $object->setTitle( $repositoryInfo->repositoryName );
-                    $object->setSummary( $repositoryInfo->repositoryDescription );
-                }
-            }
-            else
-            {
-                $uri = $rootFolderId;
+                $object = self::createObjectByBaseType( 'folder' );
+                $object->setChildrenUri( $repositoryInfo->children );
+                $object->setTitle( $repositoryInfo->repositoryName );
+                $object->setSummary( $repositoryInfo->repositoryDescription );
             }
         }
 
@@ -234,7 +224,7 @@ class nxcCMISObjectHandler
             return false;
         }
 
-        $baseTypeValue = nxcCMISUtils::getVersionSpecificValue( 'BaseType' );
+        $baseTypeValue = nxcCMISUtils::getVersionSpecificValue( 'baseTypeId' );
         $baseType = (string) nxcCMISUtils::getXMLValue( $entry, nxcCMISUtils::getVersionSpecificProperty( $baseTypeValue ) );
 
         if ( empty( $baseType ) )
@@ -321,7 +311,14 @@ class nxcCMISObjectHandler
             $browserView .= '/';
         }
 
-        $parentList = $object->getParentList();
+        try
+        {
+            $parentList = $object->getParentList();
+        }
+        catch ( Exception $error )
+        {
+            $parentList = array();
+        }
 
         if ( count( $parentList ) )
         {
@@ -397,7 +394,7 @@ class nxcCMISObjectHandler
 
         $doc->appendChild( $root );
         // @TODO: Hardcoded query
-        $statement = $doc->createElement( 'cmis:statement', "select * from document where contains ( '$searchText' )" );
+        $statement = $doc->createElement( 'cmis:statement', "select * from " . nxcCMISUtils::getVersionSpecificValue( 'cmis:' ) . "document where contains ( '$searchText' )" );
         $root->appendChild( $statement );
         $allVersions = $doc->createElement( 'cmis:searchAllVersions', $searchAllVersions ? 'true' : 'false' );
         $root->appendChild( $allVersions );

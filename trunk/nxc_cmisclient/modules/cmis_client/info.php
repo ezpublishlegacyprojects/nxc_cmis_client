@@ -39,7 +39,8 @@ try
                              'Id' => $repository->repositoryId,
                              'Root Folder Id' => nxcCMISUtils::getHostlessUri( $repository->rootFolderId ),
                              'Vendor' => $repository->vendorName,
-                             'Version' =>  $repository->productVersion );
+                             'Version' =>  $repository->productVersion,
+                             'CMIS version' =>  $repository->cmisVersionSupported );
 }
 catch ( Exception $error )
 {

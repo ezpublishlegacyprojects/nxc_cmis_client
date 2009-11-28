@@ -77,8 +77,8 @@ class nxcCMISFolder extends nxcCMISBaseObject
 
         parent::setFields( $entry );
 
-        $this->ChildrenUri = nxcCMISUtils::getEncodedUri( nxcCMISUtils::getHostlessUri( nxcCMISUtils::getLinkUri( $entry, nxcCMISUtils::getVersionSpecificValue( 'children' ) ) ) );
-        $this->DescendantsUri = nxcCMISUtils::getEncodedUri( nxcCMISUtils::getHostlessUri( nxcCMISUtils::getLinkUri( $entry, nxcCMISUtils::getVersionSpecificValue( 'descendants' ) ) ) );
+        $this->ChildrenUri = nxcCMISUtils::getEncodedUri( nxcCMISUtils::getHostlessUri( nxcCMISUtils::getLinkUri( $entry, nxcCMISUtils::getVersionSpecificValue( 'down' ), 'application\/atom\+xml;\s*type=feed' ) ) );
+        $this->DescendantsUri = nxcCMISUtils::getEncodedUri( nxcCMISUtils::getHostlessUri( nxcCMISUtils::getLinkUri( $entry, nxcCMISUtils::getVersionSpecificValue( 'down' ), 'application\/cmistree\+xml' ) ) );
         $this->ParentId = (string) nxcCMISUtils::getXMLValue( $entry, nxcCMISUtils::getVersionSpecificProperty( 'parent_id' ) );
     }
 
@@ -90,7 +90,6 @@ class nxcCMISFolder extends nxcCMISBaseObject
         $parentDef = parent::definition();
         $currentDef = array( 'function_attributes' => array_merge( $parentDef['function_attributes'], array( 'children_uri' => 'getChildrenUri',
                                                                                                              'descendants_uri' => 'getDescendantsUri',
-                                                                                                             'is_contaier' => 'isContainer',
                                                                                                              'parent_id' => 'getParentId',
                                                                                                              ) ) );
 
@@ -126,36 +125,42 @@ class nxcCMISFolder extends nxcCMISBaseObject
             return $entries;
         }
 
-        if ( nxcCMISUtils::getVersionSpecificValue( 'children_with_skip' ) )
+        $questionMark = strpos( $childrenUri, '?' ) === false ? '?' : '&';
+        $uri = $childrenUri . $questionMark . 'skipCount=' . $offset . '&maxItems=' . $limit;
+
+        /**
+         * @HACK: Fixing 'Empty reply from server' in Nuxeo.
+         *        Try to fetch children using paging.
+         *        If could not try without it.
+         */
+        try
         {
-            // @TODO: Check skipCount and maxItems in 0.62                                                                                                      .
-            $questionMark = strpos( $childrenUri, '?' ) === false ? '?' : '&';
-            $uri = $childrenUri . $questionMark . 'skipCount=' . $offset . '&maxItems=' . $limit;
-
             $response = nxcCMISUtils::invokeService( $uri );
-            $entry = nxcCMISUtils::fetchEntries( $response );
-
-            if ( isset( $entry[0] ) )
-            {
-                $id = nxcCMISUtils::getValue( $entry[0], 'id' );
-                // If returned object is the same with current need to try add '/' to uri
-                // HACK for repositories like knowledgeTree
-                if ( $id == $this->Id )
-                {
-                    $uri = $childrenUri . '/' . $questionMark . 'skipCount=' . $offset . '&maxItems=' . $limit;
-                    $response = nxcCMISUtils::invokeService( $uri );
-                    $entries = nxcCMISUtils::fetchEntries( $response );
-                }
-                else
-                {
-                    $entries = $entry;
-                }
-            }
         }
-        else
+        catch ( Exception $error )
         {
             $response = nxcCMISUtils::invokeService( $childrenUri );
-            $entries = nxcCMISUtils::fetchEntries( $response );
+        }
+
+        $entry = nxcCMISUtils::fetchEntries( $response );
+
+        if ( isset( $entry[0] ) )
+        {
+            $id = nxcCMISUtils::getValue( $entry[0], 'id' );
+            /**
+             * @HACK: Fixing wrong child list in knowledgeTree when using paging.
+             *        If returned object is the same with current need to try add '/' to uri.
+             */
+            if ( $id == $this->Id )
+            {
+                $uri = $childrenUri . '/' . $questionMark . 'skipCount=' . $offset . '&maxItems=' . $limit;
+                $response = nxcCMISUtils::invokeService( $uri );
+                $entries = nxcCMISUtils::fetchEntries( $response );
+            }
+            else
+            {
+                $entries = $entry;
+            }
         }
 
         if ( count( $entries ) )
@@ -229,17 +234,18 @@ class nxcCMISFolder extends nxcCMISBaseObject
         $summary = $doc->createElement( 'summary', nxcCMISUtils::escapeXMLEntries( $this->Summary ) );
         $root->appendChild( $summary );
 
-        $object = $doc->createElement( nxcCMISUtils::getVersionSpecificValue( 'cmis:object' ) );
+        $object = $doc->createElement( nxcCMISUtils::getVersionSpecificValue( 'cmisra:object' ) );
         $root->appendChild( $object );
         $properties = $doc->createElement( 'cmis:properties' );
         $object->appendChild( $properties );
         $objectTypeId = $doc->createElement( 'cmis:propertyId' );
-        $objectTypeId->setAttribute( 'cmis:name', 'ObjectTypeId' );
+        $objectTypeId->setAttribute( nxcCMISUtils::getVersionSpecificValue( 'propertyDefinitionId' ), nxcCMISUtils::getVersionSpecificValue( 'cmis:objectTypeId' ) );
         $properties->appendChild( $objectTypeId );
-        $value = $doc->createElement( 'cmis:value', 'folder' ); // @TODO: Hardcoded value!!!
+        $value = $doc->createElement( 'cmis:value', nxcCMISUtils::getVersionSpecificValue( 'cmis:' ) . 'folder' ); // @TODO: Hardcoded value!!!
         $objectTypeId->appendChild( $value );
 
         $xml = $doc->saveXML();
+
         $response = nxcCMISUtils::invokeService( $uri, $method, nxcCMISUtils::createHeaders( strlen( $xml ) ), $xml );
 
         if ( is_bool( $response ) )

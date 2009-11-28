@@ -18,7 +18,7 @@ ClassIdentifier=cmis_object
 ParentNodeID=
 
 [LocationSettings]
-# Uri of root node in CMIS repository where newly uploaded files via ezoe will be stored.
+# Uri of root node in CMIS repository where newly uploaded files (via ezoe) will be stored.
 # NOTE: uri must not contain host and port.
 # If uri is 'http://localhost:8080/api/node/2' so you should use 'api/node/2' only
 # If empty, root folder id will be used.

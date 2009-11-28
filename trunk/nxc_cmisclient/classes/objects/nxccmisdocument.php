@@ -97,14 +97,16 @@ class nxcCMISDocument extends nxcCMISBaseObject
 
         parent::setFields( $entry );
 
-        $size = nxcCMISUtils::getXMLValue( $entry, nxcCMISUtils::getVersionSpecificProperty( 'ContentStreamLength' ) );
+        $size = nxcCMISUtils::getXMLValue( $entry, nxcCMISUtils::getVersionSpecificProperty( 'contentStreamLength' ) );
         $this->Size = $size ? number_format( $size / 1000, 2, '.', ',' ) . ' K' : null;
-        $this->DocType = (string) nxcCMISUtils::getXMLValue( $entry, nxcCMISUtils::getVersionSpecificProperty( 'ContentStreamMimeType' ) );
+        $this->DocType = (string) nxcCMISUtils::getXMLValue( $entry, nxcCMISUtils::getVersionSpecificProperty( 'contentStreamMimeType' ) );
 
         $this->EnclosureUri = nxcCMISUtils::getEncodedUri( nxcCMISUtils::getHostlessUri( nxcCMISUtils::getLinkUri( $entry, 'enclosure' ) ) );
         $this->EditMediaUri = nxcCMISUtils::getEncodedUri( nxcCMISUtils::getHostlessUri( nxcCMISUtils::getLinkUri( $entry, 'edit-media' ) ) );
         $this->AllVersionsUri = nxcCMISUtils::getEncodedUri( nxcCMISUtils::getHostlessUri( nxcCMISUtils::getLinkUri( $entry, 'allversions' ) ) );
-        $this->StreamUri = nxcCMISUtils::getEncodedUri( nxcCMISUtils::getHostlessUri( nxcCMISUtils::getLinkUri( $entry, 'stream' ) ) );
+
+        $content = nxcCMISUtils::getValue( $entry, 'content' );
+        $this->StreamUri = $content ? nxcCMISUtils::getEncodedUri( nxcCMISUtils::getHostlessUri( nxcCMISUtils::getXMLAttribute( $content , 'src' ) ) ) : '';
     }
 
     /**
@@ -141,19 +143,19 @@ class nxcCMISDocument extends nxcCMISBaseObject
     }
 
     /**
-     * @return All versions uri
-     */
-    public function getAllVersionsUri()
-    {
-        return $this->AllVersionsUri;
-    }
-
-    /**
      * @return Stream uri
      */
     public function getStreamUri()
     {
         return $this->StreamUri;
+    }
+
+    /**
+     * @return All versions uri
+     */
+    public function getAllVersionsUri()
+    {
+        return $this->AllVersionsUri;
     }
 
     /**
@@ -252,14 +254,14 @@ class nxcCMISDocument extends nxcCMISBaseObject
 
         if ( $newObject )
         {
-            $object = $doc->createElement( nxcCMISUtils::getVersionSpecificValue( 'cmis:object' ) );
+            $object = $doc->createElement( nxcCMISUtils::getVersionSpecificValue( 'cmisra:object' ) );
             $root->appendChild( $object );
             $properties = $doc->createElement( 'cmis:properties' );
             $object->appendChild( $properties );
             $objectTypeId = $doc->createElement( 'cmis:propertyId' );
-            $objectTypeId->setAttribute( 'cmis:name', 'ObjectTypeId' );
+            $objectTypeId->setAttribute( nxcCMISUtils::getVersionSpecificValue( 'propertyDefinitionId' ), nxcCMISUtils::getVersionSpecificValue( 'cmis:objectTypeId' ) );
             $properties->appendChild( $objectTypeId );
-            $value = $doc->createElement( 'cmis:value', 'document' ); // @TODO: Hardcoded value!!!
+            $value = $doc->createElement( 'cmis:value', nxcCMISUtils::getVersionSpecificValue( 'cmis:' ) . 'document' ); // @TODO: Hardcoded value!!!
             $objectTypeId->appendChild( $value );
         }
 
@@ -277,7 +279,7 @@ class nxcCMISDocument extends nxcCMISBaseObject
         // Check if content stream has not been updated
         if ( !$newObject and !empty( $contentStream ) and $this->EditMediaUri and $this->getContent( true ) != $contentStream )
         {
-            // Put content stream to StreamUri. Use setContentStream service
+            // Put content stream to EditMediaUri. Use setContentStream service
             $response = nxcCMISUtils::invokeService( nxcCMISUtils::getDecodedUri( $this->EditMediaUri ), 'PUT', nxcCMISUtils::createHeaders( strlen( $contentStream ), $this->DocType ), $contentStream );
         }
 

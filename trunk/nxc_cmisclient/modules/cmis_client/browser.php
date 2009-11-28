@@ -29,7 +29,7 @@ include_once( 'kernel/common/template.php' );
 //include_once( eZExtension::baseDirectory() . '/nxc_cmisclient/classes/nxccmisutils.php' );
 
 $Module = $Params['Module'];
-$offset = $Params['Offset'];
+$offset = ( isset( $Params['Offset'] ) and $Params['Offset'] ) ? $Params['Offset'] : 0;
 $viewParameters = array( 'offset' => $offset );
 $browserView = $Module->functionURI( $Module->currentView() );
 
@@ -68,6 +68,7 @@ try
     {
         $error = ezi18n( 'cmis', "Unable to get object from repository by uri: '%id%'", false, array( '%id%' => $objectKey ) );
         $errorList[] = $error;
+
         eZDebug::writeError( $error );
     }
 }

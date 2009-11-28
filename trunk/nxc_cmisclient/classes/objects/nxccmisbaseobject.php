@@ -166,9 +166,9 @@ class nxcCMISBaseObject
         $this->EditUri = nxcCMISUtils::getEncodedUri( nxcCMISUtils::getHostlessUri( nxcCMISUtils::getLinkUri( $entry, 'edit' ) ) );
         $this->AllowableActionsUri = nxcCMISUtils::getEncodedUri( nxcCMISUtils::getHostlessUri( nxcCMISUtils::getLinkUri( $entry, 'allowableactions' ) ) );
         $this->RelationshipsUri = nxcCMISUtils::getEncodedUri( nxcCMISUtils::getHostlessUri( nxcCMISUtils::getLinkUri( $entry, 'relationships' ) ) );
-        $this->TypeUri = nxcCMISUtils::getEncodedUri( nxcCMISUtils::getHostlessUri( nxcCMISUtils::getLinkUri( $entry, nxcCMISUtils::getVersionSpecificValue( 'type' ) ) ) );
-        $this->RepositoryUri = nxcCMISUtils::getEncodedUri( nxcCMISUtils::getHostlessUri( nxcCMISUtils::getLinkUri( $entry, 'repository' ) ) );
-        $this->ParentsUri = nxcCMISUtils::getEncodedUri( nxcCMISUtils::getHostlessUri( nxcCMISUtils::getLinkUri( $entry, nxcCMISUtils::getVersionSpecificValue( 'parents' ) ) ) );
+        $this->TypeUri = nxcCMISUtils::getEncodedUri( nxcCMISUtils::getHostlessUri( nxcCMISUtils::getLinkUri( $entry, nxcCMISUtils::getVersionSpecificValue( 'describedby' ) ) ) );
+        $this->RepositoryUri = nxcCMISUtils::getEncodedUri( nxcCMISUtils::getHostlessUri( nxcCMISUtils::getLinkUri( $entry, nxcCMISUtils::getVersionSpecificValue( 'service' ) ) ) );
+        $this->ParentsUri = nxcCMISUtils::getEncodedUri( nxcCMISUtils::getHostlessUri( nxcCMISUtils::getLinkUri( $entry, nxcCMISUtils::getVersionSpecificValue( 'up' ) ) ) );
     }
 
     /**
@@ -193,7 +193,8 @@ class nxcCMISBaseObject
                                                       'allowable_actions_uri' => 'getAllowableActionsUri',
                                                       'relationships' => 'getRelationshipsUri',
                                                       'type_uri' => 'getTypeUri',
-                                                      'repository_uri' => 'getRepositoryUri'
+                                                      'repository_uri' => 'getRepositoryUri',
+                                                      'is_contaier' => 'isContainer',
                                                       ) );
     }
 
@@ -210,7 +211,7 @@ class nxcCMISBaseObject
      */
     public function setSelfUri( $uri )
     {
-        // @TODO Is it needed to check for existance of selfUri? If exists don't need to set
+        // @TODO Is it needed to check for existance of selfUri? If it exists don't need to set
         $this->SelfUri = nxcCMISUtils::getEncodedUri( $uri );
     }
 
@@ -260,7 +261,7 @@ class nxcCMISBaseObject
     public function getParentSelfUri()
     {
         $uri = nxcCMISUtils::fetchLinkValue( nxcCMISUtils::getDecodedUri( $this->ParentsUri ), 'self' );
-        // @HACK to prevent situation when the server returns the same object with current, but parent must be returned
+        // @HACK: to prevent situation when the server returns the same object with current, but parent must be returned
         return $uri != nxcCMISUtils::getDecodedUri( $this->SelfUri ) ? nxcCMISUtils::getEncodedUri( $uri ) : '';
     }
 
@@ -269,7 +270,7 @@ class nxcCMISBaseObject
      */
     public function getParentChildrenUri()
     {
-        $uri = nxcCMISUtils::fetchLinkValue( nxcCMISUtils::getDecodedUri( $this->ParentsUri ), nxcCMISUtils::getVersionSpecificValue( 'children' ) );
+        $uri = nxcCMISUtils::fetchLinkValue( nxcCMISUtils::getDecodedUri( $this->ParentsUri ), nxcCMISUtils::getVersionSpecificValue( 'down' ), 'application\/atom\+xml;\s*type=feed' );
 
         return  $uri != nxcCMISUtils::getDecodedUri( $this->SelfUri ) ? nxcCMISUtils::getEncodedUri( $uri ) : '';
     }
@@ -400,8 +401,8 @@ class nxcCMISBaseObject
             }
 
             // Prevent infinite loop
-            $tmpParentsUri = nxcCMISUtils::getLinkUri( $entry, 'parents' );
-            if ( nxcCMISUtils::getHostlessUri( $tmpParentsUri ) == $parentsUri )
+            $tmpParentsUri = nxcCMISUtils::getLinkUri( $entry, nxcCMISUtils::getVersionSpecificValue( 'up' ) );
+            if ( nxcCMISUtils::getHostlessUri( $tmpParentsUri ) == nxcCMISUtils::getHostlessUri( $parentsUri ) )
             {
                 break;
             }

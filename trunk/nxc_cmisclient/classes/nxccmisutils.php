@@ -30,8 +30,8 @@
 
 class nxcCMISUtils
 {
-    const PROPERTY_TPL   = 'cmis:object/cmis:properties/cmis:*[@cmis:name="%NAME%"]/cmis:value';
-    const COLLECTION_TPL = '/app:service/app:workspace/app:collection[@cmis:collectionType="%NAME%"]';
+    const PROPERTY_TPL   = 'cmisra:object/cmis:properties/cmis:*[@propertyDefinitionId="cmis:%NAME%"]/cmis:value';
+    const COLLECTION_TPL = '/app:service/app:workspace/app:collection[cmisra:collectionType="%NAME%"]';
     const CMIS_USER      = 'CMISUser';
     const CMIS_PASSWORD  = 'CMISPassword';
 
@@ -266,7 +266,7 @@ class nxcCMISUtils
     /**
      * Provides CMIS version that is supported by repository
      *
-     * @return string
+     * @return string|false
      */
     public static function getCMISVersionSupported()
      {
@@ -285,8 +285,7 @@ class nxcCMISUtils
          }
 
          // Remove words from version: was 0.61c, now 0.61
-         $version = isset( $cmisVersion[0] ) ? (string)(float) $cmisVersion[0] : false;
-
+         $version = isset( $cmisVersion[0] ) ? preg_replace( '/[^0-9.]+/', '', (string) $cmisVersion[0] ) : false;
          if ( $version )
          {
              $GLOBALS[$name] = $version;
@@ -310,14 +309,14 @@ class nxcCMISUtils
 
          $response = self::invokeService( self::getEndPoint() );
 
-         $repoInfo = self::processXML( $response, self::getVersionSpecificValue( '/app:service/app:workspace/cmis:repositoryInfo' ) );
+         $repoInfo = self::processXML( $response, self::getVersionSpecificValue( '/app:service/app:workspace/cmisra:repositoryInfo' ) );
          if ( !isset( $repoInfo[0] ) )
          {
              throw new Exception( ezi18n( 'cmis', 'Could not fetch repository info:'  ) . "\n$response" );
          }
 
-         $collectionRootChildren = self::processXML( $response, self::getVersionSpecificCollection( self::getVersionSpecificValue( 'rootchildren' ) ) );
-         $collectionTypes = self::processXML( $response, self::getVersionSpecificCollection( self::getVersionSpecificValue( 'typesdescendants' ) ) );
+         $collectionRootChildren = self::processXML( $response, self::getVersionSpecificCollection( self::getVersionSpecificValue( 'root' ) ) );
+         $collectionTypes = self::processXML( $response, self::getVersionSpecificCollection( self::getVersionSpecificValue( 'types' ) ) );
          $collectionQuery = self::processXML( $response, self::getVersionSpecificCollection( self::getVersionSpecificValue( 'query' ) ) );
 
          $repository = new stdClass();
@@ -336,8 +335,8 @@ class nxcCMISUtils
 
          $response = self::invokeService( $repository->types );
 
-         $keyList = self::processXML( $response, self::getVersionSpecificValue( '//cmis:typeId' ) );
-         $valueList = self::processXML( $response, self::getVersionSpecificValue( '//cmis:baseType' ) );
+         $keyList = self::processXML( $response, self::getVersionSpecificValue( '//cmis:id' ) );
+         $valueList = self::processXML( $response, self::getVersionSpecificValue( '//cmis:baseId' ) );
 
          $cmisTypes = array();
          foreach( $keyList as $keyEntry => $key )
@@ -427,39 +426,74 @@ class nxcCMISUtils
       */
      public static function getVersionSpecificValue( $value )
      {
-         $versionSpecificValues = array( '/app:service/app:workspace/cmis:repositoryInfo'
-                                            => array( '0.62' => '/app:service/app:workspace/cmisra:repositoryInfo' ),
+         $versionSpecificValues = array( '/app:service/app:workspace/cmisra:repositoryInfo'
+                                            => array( '0.61' => '/app:service/app:workspace/cmis:repositoryInfo' ),
                                          self::COLLECTION_TPL
-                                            => array( '0.62' => '/app:service/app:workspace/app:collection[@cmisra:collectionType="%NAME%"]' ),
-                                         'rootchildren'
-                                            => array( '0.62' => 'root' ),
-                                         'typesdescendants'
-                                            => array( '0.62' => 'types' ),
-                                         '//cmis:typeId'
-                                            => array( '0.62' => '//cmis:id' ),
-                                         '//cmis:baseType'
-                                            => array( '0.62' => '//cmis:baseTypeId' ),
+                                            => array( '0.61' => '/app:service/app:workspace/app:collection[@cmis:collectionType="%NAME%"]' ),
+                                         'root'
+                                            => array( '0.61' => 'rootchildren' ),
+                                         'types'
+                                            => array( '0.61' => 'typesdescendants' ),
+                                         '//cmis:id'
+                                            => array( '0.61' => '//cmis:typeId' ),
+                                         '//cmis:baseId'
+                                            => array( '0.62' => '//cmis:baseTypeId',
+                                                      '0.61' => '//cmis:baseType' ),
                                          self::PROPERTY_TPL
-                                            => array( '0.62' => 'cmisra:object/cmis:properties/cmis:*[@pdid="cmis:%NAME%"]/cmis:value' ),
-                                         'BaseType'
-                                            => array( '0.62' => 'BaseTypeId' ),
-                                         'children'
-                                            => array( '0.62' => 'down' ),
-                                         'parents'
-                                            => array( '0.62' => 'up' ),
-                                         'descendants'
-                                            => array( '0.62' => 'down' ),
-                                         'type'
-                                            => array( '0.62' => 'describedby' ),
-                                         'cmis:object'
-                                            => array( '0.62' => 'cmisra:object' ),
-                                         'children_with_skip'
-                                            => array( '0.62' => false )
+                                            => array( '0.61' => 'cmis:object/cmis:properties/cmis:*[@cmis:name="%NAME%"]/cmis:value' ),
+                                         'baseTypeId'
+                                            => array( '0.61' => 'BaseType' ),
+                                         'down'
+                                            => array( '0.61' => 'children' ),
+                                         'up'
+                                            => array( '0.61' => 'parents' ),
+                                         /*'descendants'.
+                                            => array( '1.0' => 'down' ),*/
+                                         'describedby'
+                                            => array( '0.61' => 'type' ),
+                                         'cmisra:object'
+                                            => array( '0.61' => 'cmis:object' ),
+                                         'service'
+                                            => array( '0.61' => 'repository' ),
+                                         'cmis:objectTypeId'
+                                            => array( '0.61' => 'ObjectTypeId' ),
+                                         'propertyDefinitionId'
+                                            => array( '0.62' => 'cmis:name' ),
+                                         'contentStreamMimeType'
+                                            => array( '0.61' => 'ContentStreamMimeType' ),
+                                         'contentStreamLength'
+                                            => array( '0.61' => 'ContentStreamLength' ),
+                                         'cmis:'
+                                            => array( '0.61' => '' ),
+
                                          );
 
          $currentVersion = self::getCMISVersionSupported();
+         $result = $value;
 
-         return isset( $versionSpecificValues[$value][$currentVersion] ) ? $versionSpecificValues[$value][$currentVersion] : $value;
+         if ( isset( $versionSpecificValues[$value][$currentVersion] ) )
+         {
+             $result = $versionSpecificValues[$value][$currentVersion];
+         }
+         elseif ( isset( $versionSpecificValues[$value] ) )
+         {
+             // @TODO Implement it
+             $versionList = $versionSpecificValues[$value];
+             // Sort version list by version. The max version will be the first element
+             ksort( $versionList );
+             // Fetch max version
+             $firstVersion = key( $versionList );
+             // Fetch value of max version
+             $firstValue = current( $versionList );
+
+             // Check if the current version is lower than max version from list
+             if ( version_compare( $currentVersion, $firstVersion ) < 0 )
+             {
+                 $result = $firstValue;
+             }
+         }
+
+         return $result;
      }
 
      /**
@@ -469,9 +503,7 @@ class nxcCMISUtils
       */
      public static function getVersionSpecificValueByTpl( $name, $tpl, $tplValue = '%NAME%' )
      {
-         $property = self::getVersionSpecificValue( $tpl );
-
-         return str_replace( $tplValue, $name, $property );
+         return str_replace( $tplValue, self::getVersionSpecificValue( $name ), self::getVersionSpecificValue( $tpl ) );
      }
 
      /**
@@ -529,18 +561,36 @@ class nxcCMISUtils
      /**
       * Provides 'href' value of a link
       *
+      * @param Name of link like 'down'
+      * @param Type of link to define difference between descendants and children (both use 'down' link).
+      *        Type can be reg exp.
       * @return string
       */
-     public static function getLinkUri( $entry, $name )
+     public static function getLinkUri( $entry, $name, $type = false )
      {
          if ( !$entry )
          {
              return null;
          }
 
-         $linkXML = $entry->xpath( '*[@rel="' . $name . '"]' );
+         $linkXML = $entry->xpath( '*[@rel="' . $name . '"]');
+         $result = isset( $linkXML[0] ) ? self::getXMLAttribute( $linkXML[0] , 'href' ) : '';
 
-         return isset( $linkXML[0] ) ? self::getXMLAttribute( $linkXML[0] , 'href' ) : '';
+         if ( $type )
+         {
+             foreach ( $linkXML as $node )
+             {
+                 $nodeType = self::getXMLAttribute( $node , 'type' );
+
+                 if ( preg_match( "/$type/", $nodeType ) )
+                 {
+                     $result = self::getXMLAttribute( $node , 'href' );
+                     break;
+                 }
+             }
+         }
+
+         return $result;
      }
 
      /**
@@ -550,7 +600,7 @@ class nxcCMISUtils
       *
       * @return string
       */
-     public static function fetchLinkValue( $uri, $value )
+     public static function fetchLinkValue( $uri, $value, $type = false )
      {
          if ( empty( $uri ) )
          {
@@ -570,7 +620,7 @@ class nxcCMISUtils
              $entry = self::fetchEntry( $xml );
              if ( $entry )
              {
-                 $result = self::getHostlessUri( self::getLinkUri( $entry, $value ) );
+                 $result = self::getHostlessUri( self::getLinkUri( $entry, $value, $type ) );
                  $GLOBALS[$name] = $result;
              }
 
@@ -755,8 +805,8 @@ class nxcCMISUtils
      {
          return array( 'atom' => 'http://www.w3.org/2005/Atom',
                        'app'  => 'http://www.w3.org/2007/app',
-                       'cmis' => 'http://docs.oasis-open.org/ns/cmis/core/200901',
-                       'cmisra' => 'http://docs.oasis-open.org/ns/cmis/restatom/200901' );
+                       'cmis' => 'http://docs.oasis-open.org/ns/cmis/core/200908/',
+                       'cmisra' => 'http://docs.oasis-open.org/ns/cmis/restatom/200908/' );
      }
 
      /**
