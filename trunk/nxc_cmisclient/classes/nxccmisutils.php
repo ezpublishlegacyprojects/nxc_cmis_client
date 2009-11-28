@@ -483,7 +483,7 @@ class nxcCMISUtils
          elseif ( isset( $versionSpecificValues[$value] ) )
          {
              /**
-              * Check if the current version is lower than max version provided in version list
+              * Check if the current version is less than max version provided in version list.
               * If so, use the nearest version value.
               */
 
@@ -495,7 +495,7 @@ class nxcCMISUtils
              // Fetch value of max version
              $firstValue = current( $versionList );
 
-             // Check if the current version is lower than max version from list
+             // Check if the current version is less than max version from list
              if ( version_compare( $currentVersion, $firstVersion ) < 0 )
              {
                  // Fetch the nearest version value
@@ -519,7 +519,7 @@ class nxcCMISUtils
       *
       * @return string
       */
-     public static function getVersionSpecificValueByTpl( $name, $tpl, $tplValue = '%NAME%' )
+     protected static function getVersionSpecificValueByTpl( $name, $tpl, $tplValue = '%NAME%' )
      {
          return str_replace( $tplValue, self::getVersionSpecificValue( $name ), self::getVersionSpecificValue( $tpl ) );
      }

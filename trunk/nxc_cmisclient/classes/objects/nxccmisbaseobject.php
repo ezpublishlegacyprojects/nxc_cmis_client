@@ -260,9 +260,17 @@ class nxcCMISBaseObject
      */
     public function getParentSelfUri()
     {
+        $name = __METHOD__ . $this->ParentsUri;
+        if ( isset( $GLOBALS[$name] ) )
+        {
+            return $GLOBALS[$name];
+        }
+
         $uri = nxcCMISUtils::fetchLinkValue( nxcCMISUtils::getDecodedUri( $this->ParentsUri ), 'self' );
         // @HACK: to prevent situation when the server returns the same object with current, but parent must be returned
-        return $uri != nxcCMISUtils::getDecodedUri( $this->SelfUri ) ? nxcCMISUtils::getEncodedUri( $uri ) : '';
+        $GLOBALS[$name] = $uri != nxcCMISUtils::getDecodedUri( $this->SelfUri ) ? nxcCMISUtils::getEncodedUri( $uri ) : '';
+
+        return $GLOBALS[$name];
     }
 
     /**
@@ -270,9 +278,16 @@ class nxcCMISBaseObject
      */
     public function getParentChildrenUri()
     {
-        $uri = nxcCMISUtils::fetchLinkValue( nxcCMISUtils::getDecodedUri( $this->ParentsUri ), nxcCMISUtils::getVersionSpecificValue( 'down' ), 'application\/atom\+xml;\s*type=feed' );
+        $name = __METHOD__ . $this->ParentsUri;
+        if ( isset( $GLOBALS[$name] ) )
+        {
+            return $GLOBALS[$name];
+        }
 
-        return  $uri != nxcCMISUtils::getDecodedUri( $this->SelfUri ) ? nxcCMISUtils::getEncodedUri( $uri ) : '';
+        $uri = nxcCMISUtils::fetchLinkValue( nxcCMISUtils::getDecodedUri( $this->ParentsUri ), nxcCMISUtils::getVersionSpecificValue( 'down' ), 'application\/atom\+xml;\s*type=feed' );
+        $GLOBALS[$name] = $uri != nxcCMISUtils::getDecodedUri( $this->SelfUri ) ? nxcCMISUtils::getEncodedUri( $uri ) : '';
+
+        return $GLOBALS[$name];
     }
 
     /**

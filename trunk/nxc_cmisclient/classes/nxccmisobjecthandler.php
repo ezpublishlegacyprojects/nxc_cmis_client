@@ -149,7 +149,7 @@ class nxcCMISObjectHandler
     public static function fetch( $uri )
     {
         $response = nxcCMISUtils::invokeService( $uri );
-        $entry =  nxcCMISUtils::fetchEntry( $response );
+        $entry = nxcCMISUtils::fetchEntry( $response );
 
         return self::createObject( $entry );
     }
@@ -179,6 +179,19 @@ class nxcCMISObjectHandler
                 $object->setChildrenUri( $repositoryInfo->children );
                 $object->setTitle( $repositoryInfo->repositoryName );
                 $object->setSummary( $repositoryInfo->repositoryDescription );
+
+                /**
+                 * Fetch self uri of root object
+                 */
+
+                $children = $object->getChildren( 0, 1 );
+                if ( is_array( $children ) )
+                {
+                    $child = current( $children );
+                    $childObject = self::createObject( $child );
+                    $parentSelfUri = $childObject->getParentSelfUri();
+                    $object->setSelfUri( nxcCMISUtils::getDecodedUri( $parentSelfUri ) );
+                }
             }
         }
 
@@ -214,7 +227,7 @@ class nxcCMISObjectHandler
     /**
      * Creates CMIS content object
      *
-     * @param SimpleXMLElement $object
+     * @param SimpleXMLElement object
      * @return nxcCMISBaseObject descendant
      */
     public static function createObject( $entry )

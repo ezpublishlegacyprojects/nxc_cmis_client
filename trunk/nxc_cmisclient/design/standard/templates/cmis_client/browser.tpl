@@ -42,9 +42,9 @@
         {* DESIGN: Header END *}
 
         <form method="post" action={'cmis_client/action'|ezurl}>
-	<input type="hidden" name="CurrentSelfURI" value="{$current_object.self_uri}" />
+        <input type="hidden" name="CurrentSelfURI" value="{$current_object.self_uri}" />
         <input type="hidden" name="ParentSelfURI" value="{$current_object.parent_self_uri}" />
-	<input type="hidden" name="ParentChildrenURI" value="{$current_object.parent_children_uri}" />
+        <input type="hidden" name="ParentChildrenURI" value="{$current_object.parent_children_uri}" />
 
         <div class="box-ml">
             <div class="box-mr">
