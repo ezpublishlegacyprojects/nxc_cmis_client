@@ -207,6 +207,7 @@ class nxcCMISUtils
 
         $error = 'Failed to invoke service [' . $method . '] ' . self::getHostlessUri( $url ) . ' Code:' . $response->code . "\n" . $response->error;
         eZDebug::writeError( $error, __METHOD__ );
+        eZDebug::writeError( $response->data, __METHOD__ );
 
         throw new Exception( $error );
     }
@@ -422,50 +423,54 @@ class nxcCMISUtils
      /**
       * Provides value if it differs between CMIS versions
       *
+      * @param Value
+      * @param Additional params to denife specific values
+      *
       * @return string
       */
-     public static function getVersionSpecificValue( $value )
+     public static function getVersionSpecificValue( $value, $params = array() )
      {
+         /**
+          * VALUE => array( VERSION => OLD_VALUE )
+          * VERSION is the last version where OLD_VALUE should be used instead of VALUE
+          */
          $versionSpecificValues = array( '/app:service/app:workspace/cmisra:repositoryInfo'
-                                            => array( '0.61' => '/app:service/app:workspace/cmis:repositoryInfo' ),
+                                             => array( '0.61' => '/app:service/app:workspace/cmis:repositoryInfo' ),
                                          self::COLLECTION_TPL
-                                            => array( '0.61' => '/app:service/app:workspace/app:collection[@cmis:collectionType="%NAME%"]' ),
+                                             => array( '0.61' => '/app:service/app:workspace/app:collection[@cmis:collectionType="%NAME%"]' ),
                                          'root'
-                                            => array( '0.61' => 'rootchildren' ),
+                                             => array( '0.61' => 'rootchildren' ),
                                          'types'
-                                            => array( '0.61' => 'typesdescendants' ),
+                                             => array( '0.61' => 'typesdescendants' ),
                                          '//cmis:id'
-                                            => array( '0.61' => '//cmis:typeId' ),
+                                             => array( '0.61' => '//cmis:typeId' ),
                                          '//cmis:baseId'
-                                            => array( '0.62' => '//cmis:baseTypeId',
-                                                      '0.61' => '//cmis:baseType' ),
+                                             => array( '0.62' => '//cmis:baseTypeId',
+                                                       '0.61' => '//cmis:baseType' ),
                                          self::PROPERTY_TPL
-                                            => array( '0.61' => 'cmis:object/cmis:properties/cmis:*[@cmis:name="%NAME%"]/cmis:value' ),
+                                             => array( '0.61' => 'cmis:object/cmis:properties/cmis:*[@cmis:name="%NAME%"]/cmis:value' ),
                                          'baseTypeId'
-                                            => array( '0.61' => 'BaseType' ),
+                                             => array( '0.61' => 'BaseType' ),
                                          'down'
-                                            => array( '0.61' => 'children' ),
+                                             => array( '0.61' => isset( $params['descendants'] ) ? 'descendants' : 'children' ),
                                          'up'
-                                            => array( '0.61' => 'parents' ),
-                                         /*'descendants'.
-                                            => array( '1.0' => 'down' ),*/
+                                             => array( '0.61' => 'parents' ),
                                          'describedby'
-                                            => array( '0.61' => 'type' ),
+                                             => array( '0.61' => 'type' ),
                                          'cmisra:object'
-                                            => array( '0.61' => 'cmis:object' ),
+                                             => array( '0.61' => 'cmis:object' ),
                                          'service'
-                                            => array( '0.61' => 'repository' ),
+                                             => array( '0.61' => 'repository' ),
                                          'cmis:objectTypeId'
-                                            => array( '0.61' => 'ObjectTypeId' ),
+                                             => array( '0.61' => 'ObjectTypeId' ),
                                          'propertyDefinitionId'
-                                            => array( '0.62' => 'cmis:name' ),
+                                             => array( '0.62' => 'cmis:name' ),
                                          'contentStreamMimeType'
-                                            => array( '0.61' => 'ContentStreamMimeType' ),
+                                             => array( '0.61' => 'ContentStreamMimeType' ),
                                          'contentStreamLength'
-                                            => array( '0.61' => 'ContentStreamLength' ),
+                                             => array( '0.61' => 'ContentStreamLength' ),
                                          'cmis:'
-                                            => array( '0.61' => '' ),
-
+                                             => array( '0.61' => '' ),
                                          );
 
          $currentVersion = self::getCMISVersionSupported();
@@ -477,10 +482,14 @@ class nxcCMISUtils
          }
          elseif ( isset( $versionSpecificValues[$value] ) )
          {
-             // @TODO Implement it
+             /**
+              * Check if the current version is lower than max version provided in version list
+              * If so, use the nearest version value.
+              */
+
              $versionList = $versionSpecificValues[$value];
              // Sort version list by version. The max version will be the first element
-             ksort( $versionList );
+             krsort( $versionList );
              // Fetch max version
              $firstVersion = key( $versionList );
              // Fetch value of max version
@@ -489,7 +498,16 @@ class nxcCMISUtils
              // Check if the current version is lower than max version from list
              if ( version_compare( $currentVersion, $firstVersion ) < 0 )
              {
-                 $result = $firstValue;
+                 // Fetch the nearest version value
+                 foreach ( $versionList as $versionItem => $versionValue )
+                 {
+                     if ( version_compare( $currentVersion, $versionItem ) > 0 )
+                     {
+                         break;
+                     }
+
+                     $result = $versionValue;
+                 }
              }
          }
 

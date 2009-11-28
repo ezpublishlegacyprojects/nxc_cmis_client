@@ -78,7 +78,7 @@ class nxcCMISFolder extends nxcCMISBaseObject
         parent::setFields( $entry );
 
         $this->ChildrenUri = nxcCMISUtils::getEncodedUri( nxcCMISUtils::getHostlessUri( nxcCMISUtils::getLinkUri( $entry, nxcCMISUtils::getVersionSpecificValue( 'down' ), 'application\/atom\+xml;\s*type=feed' ) ) );
-        $this->DescendantsUri = nxcCMISUtils::getEncodedUri( nxcCMISUtils::getHostlessUri( nxcCMISUtils::getLinkUri( $entry, nxcCMISUtils::getVersionSpecificValue( 'down' ), 'application\/cmistree\+xml' ) ) );
+        $this->DescendantsUri = nxcCMISUtils::getEncodedUri( nxcCMISUtils::getHostlessUri( nxcCMISUtils::getLinkUri( $entry, nxcCMISUtils::getVersionSpecificValue( 'down', array( 'descendants' => true ) ), 'application\/cmistree\+xml' ) ) );
         $this->ParentId = (string) nxcCMISUtils::getXMLValue( $entry, nxcCMISUtils::getVersionSpecificProperty( 'parent_id' ) );
     }
 
