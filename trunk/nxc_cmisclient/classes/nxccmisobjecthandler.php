@@ -175,22 +175,38 @@ class nxcCMISObjectHandler
             $repositoryInfo = nxcCMISUtils::getRepositoryInfo();
             if ( $repositoryInfo->children and !empty( $repositoryInfo->children ) )
             {
+                /**
+                 * Use repository info as root object
+                 */
                 $object = self::createObjectByBaseType( 'folder' );
                 $object->setChildrenUri( $repositoryInfo->children );
                 $object->setTitle( $repositoryInfo->repositoryName );
                 $object->setSummary( $repositoryInfo->repositoryDescription );
 
                 /**
-                 * Fetch self uri of root object
+                 * Fetch root object
+                 *
+                 * @TODO: Review. Is it better to use a template from repository info?
                  */
-
-                $children = $object->getChildren( 0, 1 );
-                if ( is_array( $children ) )
+                try
                 {
-                    $child = current( $children );
-                    $childObject = self::createObject( $child );
-                    $parentSelfUri = $childObject->getParentSelfUri();
-                    $object->setSelfUri( nxcCMISUtils::getDecodedUri( $parentSelfUri ) );
+                    $children = $object->getChildren( 0, 1 );
+                    if ( is_array( $children ) and count( $children ) )
+                    {
+                        $child = current( $children );
+                        $childObject = $child ? self::createObject( $child ) : false;
+                        $parentSelfUri = $childObject ? $childObject->getParentSelfUri() : false;
+                        $parentObject = $parentSelfUri ? self::fetch( nxcCMISUtils::getDecodedUri( $parentSelfUri ) ) : false;
+
+                        if ( $parentObject and $parentObject->getTitle() != '' )
+                        {
+                            $object = $parentObject;
+                        }
+                    }
+                }
+                catch ( Exception $error )
+                {
+
                 }
             }
         }
