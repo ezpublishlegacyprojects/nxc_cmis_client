@@ -69,6 +69,13 @@ class nxcCMISDocument extends nxcCMISBaseObject
     protected $StreamUri = null;
 
     /**
+     * Content stream file name
+     *
+     * @var string
+     */
+    protected $ContentStreamFileName = null;
+
+    /**
      * Content
      *
      * @var byte[]
@@ -107,6 +114,7 @@ class nxcCMISDocument extends nxcCMISBaseObject
 
         $content = nxcCMISUtils::getValue( $entry, 'content' );
         $this->StreamUri = $content ? nxcCMISUtils::getEncodedUri( nxcCMISUtils::getHostlessUri( nxcCMISUtils::getXMLAttribute( $content , 'src' ) ) ) : '';
+        $this->ContentStreamFileName = (string) nxcCMISUtils::getXMLValue( $entry, nxcCMISUtils::getVersionSpecificProperty( 'contentStreamFileName' ) );
     }
 
     /**
@@ -203,6 +211,14 @@ class nxcCMISDocument extends nxcCMISBaseObject
     public function getClassIdentifier()
     {
         return strstr( $this->DocType, 'image' ) !== false ? 'image' : ( strstr( $this->DocType, 'text' ) !== false ? 'content' : 'file' );
+    }
+
+    /**
+     * @return string Content file name
+     */
+    public function getContentStreamFileName()
+    {
+        return $this->ContentStreamFileName;
     }
 
     /**

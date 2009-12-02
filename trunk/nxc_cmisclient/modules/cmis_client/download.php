@@ -51,7 +51,7 @@ try
 
     header( 'Cache-Control: no-cache, must-revalidate' );
     header( 'Content-type: ' . $object->getDocType() );
-    header( 'Content-Disposition: attachment; filename="' . $object->getTitle(). '"' );
+    header( 'Content-Disposition: attachment; filename="' . $object->getContentStreamFileName() . '"' );
 
     echo $content;
 

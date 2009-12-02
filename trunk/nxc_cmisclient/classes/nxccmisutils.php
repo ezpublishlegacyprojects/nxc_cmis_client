@@ -469,6 +469,8 @@ class nxcCMISUtils
                                              => array( '0.61' => 'ContentStreamMimeType' ),
                                          'contentStreamLength'
                                              => array( '0.61' => 'ContentStreamLength' ),
+                                         'contentStreamFileName'
+                                             => array( '0.61' => 'ContentStreamFileName' ),
                                          'cmis:'
                                              => array( '0.61' => '' ),
                                          );
