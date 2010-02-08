@@ -40,7 +40,7 @@ function checkButtonState()
                     <div class="box-tl">
                         <div class="box-tr">
 
-                            <h1 class="context-title">{'folder'|class_icon( normal, 'Create space'|i18n( 'cmis' ) )}&nbsp;{'Create space'|i18n( 'cmis' )}</h1>
+                            <h1 class="context-title">{'folder'|class_icon( normal, 'Create folder'|i18n( 'cmis' ) )}&nbsp;{'Create folder'|i18n( 'cmis' )}</h1>
 
                             {* DESIGN: Mainline *}<div class="header-mainline"></div>
 
