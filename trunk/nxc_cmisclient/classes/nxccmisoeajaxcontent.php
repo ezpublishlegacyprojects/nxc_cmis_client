@@ -138,6 +138,10 @@ class nxcCMISOEAjaxContent
         $ret['class_identifier'] = $cmisObject->getClassIdentifier();
         $ret['is_container']     = $cmisObject->isContainer();
         $ret['url_alias']        = $cmisObject->getSelfUri();
+        // @TODO: Remove hardcoded module name
+        $streamUri               = 'cmis_client/content/' . $cmisObject->getSelfUri();
+        eZURI::transformURI( $streamUri );
+        $ret['stream_uri']       = $streamUri;
 
         $ret['path'] = array();
         if ( $params['fetchPath'] )

@@ -182,6 +182,16 @@ eZOEPopupUtils.cmisBrowseCallBack = function( r, mode, emptyCallBack )
                tr.appendChild( td );
 
                td = document.createElement( "td" );
+
+               if ( n.class_identifier == 'image' )
+               {
+                   tag = document.createElement( "span" );
+                   tag.className = 'image_preview';
+                   tag.innerHTML += ' <a href="#">' + ed.getLang( 'preview.preview_desc' )  + '<img src="' + n.stream_uri + '" width="160"/></a>';
+                   td.appendChild( tag );
+                   hasImage = true;
+               }
+
                tr.appendChild( td );
                tr.className = classGenerator.call( this, n, n.class_identifier == 'image' );
                tbody.el.appendChild( tr );
