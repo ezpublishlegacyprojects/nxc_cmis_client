@@ -70,7 +70,7 @@ class nxcCMISFolder extends nxcCMISBaseObject
      */
     public function setFields( $entry )
     {
-        if ( !$entry )
+        if ( !is_object( $entry ) )
         {
             return;
         }

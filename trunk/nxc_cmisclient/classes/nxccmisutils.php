@@ -588,7 +588,7 @@ class nxcCMISUtils
       */
      public static function getLinkUri( $entry, $name, $type = false )
      {
-         if ( !$entry )
+         if ( !is_object( $entry ) )
          {
              return null;
          }
@@ -700,7 +700,7 @@ class nxcCMISUtils
       */
      public static function getXMLValue( SimpleXMLElement $entry, $xpath )
      {
-         if ( is_null( $entry ) )
+         if ( is_null( $entry ) or $entry === false )
          {
              return null;
          }
@@ -740,7 +740,7 @@ class nxcCMISUtils
                  $nsName .= ':';
              }
 
-             $value = $entry->xpath( "//$nsName$name" );
+             $value = $entry->xpath( "$nsName$name" );
 
              if ( isset( $value[0] ) )
              {

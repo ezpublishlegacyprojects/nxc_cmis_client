@@ -97,7 +97,7 @@ class nxcCMISDocument extends nxcCMISBaseObject
      */
     public function setFields( $entry )
     {
-        if ( !$entry )
+        if ( !is_object( $entry ) )
         {
             return;
         }
@@ -263,7 +263,7 @@ class nxcCMISDocument extends nxcCMISBaseObject
 
         if ( !empty( $contentStream ) )
         {
-            $stream = strpos( 'text', $this->DocType ) === false ? base64_encode( $contentStream ) : $contentStream;
+            $stream = strpos( $this->DocType, 'text' ) === false ? base64_encode( $contentStream ) : $contentStream;
             $content = $doc->createElement( 'content', $stream );
             $content->setAttribute( 'type', $this->DocType );
             $root->appendChild( $content );

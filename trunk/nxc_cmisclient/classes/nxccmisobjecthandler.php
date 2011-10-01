@@ -214,7 +214,7 @@ class nxcCMISObjectHandler
         if ( !$object and $uri )
         {
             $response = nxcCMISUtils::invokeService( $uri );
-            $entry = nxcCMISUtils::fetchEntry( $response ) ;
+            $entry = nxcCMISUtils::fetchEntry( $response );
             $object = self::createObject( $entry );
         }
 
@@ -248,7 +248,7 @@ class nxcCMISObjectHandler
      */
     public static function createObject( $entry )
     {
-        if ( !$entry )
+        if ( !is_object( $entry ) )
         {
             return false;
         }
