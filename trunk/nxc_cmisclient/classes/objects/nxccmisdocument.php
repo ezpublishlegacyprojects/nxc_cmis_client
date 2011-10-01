@@ -269,18 +269,15 @@ class nxcCMISDocument extends nxcCMISBaseObject
             $root->appendChild( $content );
         }
 
-        if ( $newObject )
-        {
-            $object = $doc->createElement( nxcCMISUtils::getVersionSpecificValue( 'cmisra:object' ) );
-            $root->appendChild( $object );
-            $properties = $doc->createElement( 'cmis:properties' );
-            $object->appendChild( $properties );
-            $objectTypeId = $doc->createElement( 'cmis:propertyId' );
-            $objectTypeId->setAttribute( nxcCMISUtils::getVersionSpecificValue( 'propertyDefinitionId' ), nxcCMISUtils::getVersionSpecificValue( 'cmis:objectTypeId' ) );
-            $properties->appendChild( $objectTypeId );
-            $value = $doc->createElement( 'cmis:value', nxcCMISUtils::getVersionSpecificValue( 'cmis:' ) . 'document' ); // @TODO: Hardcoded value!!!
-            $objectTypeId->appendChild( $value );
-        }
+        $object = $doc->createElement( nxcCMISUtils::getVersionSpecificValue( 'cmisra:object' ) );
+        $root->appendChild( $object );
+        $properties = $doc->createElement( 'cmis:properties' );
+        $object->appendChild( $properties );
+        $objectTypeId = $doc->createElement( 'cmis:propertyId' );
+        $objectTypeId->setAttribute( nxcCMISUtils::getVersionSpecificValue( 'propertyDefinitionId' ), nxcCMISUtils::getVersionSpecificValue( 'cmis:objectTypeId' ) );
+        $properties->appendChild( $objectTypeId );
+        $value = $doc->createElement( 'cmis:value', nxcCMISUtils::getVersionSpecificValue( 'cmis:' ) . 'document' ); // @TODO: Hardcoded value!!!
+        $objectTypeId->appendChild( $value );
 
         $xml = $doc->saveXML();
         $response = nxcCMISUtils::invokeService( $uri, $method, nxcCMISUtils::createHeaders( strlen( $xml ) ), $xml );
