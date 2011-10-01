@@ -263,7 +263,8 @@ class nxcCMISDocument extends nxcCMISBaseObject
 
         if ( !empty( $contentStream ) )
         {
-            $content = $doc->createElement( 'content', base64_encode( $contentStream ) );
+            $stream = strpos( 'text', $this->DocType ) === false ? base64_encode( $contentStream ) : $contentStream;
+            $content = $doc->createElement( 'content', $stream );
             $content->setAttribute( 'type', $this->DocType );
             $root->appendChild( $content );
         }

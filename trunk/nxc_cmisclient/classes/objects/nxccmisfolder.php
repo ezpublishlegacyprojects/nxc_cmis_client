@@ -126,22 +126,9 @@ class nxcCMISFolder extends nxcCMISBaseObject
         }
 
         $questionMark = strpos( $childrenUri, '?' ) === false ? '?' : '&';
-        $uri = $childrenUri . $questionMark . 'skipCount=' . $offset . '&maxItems=' . $limit;
+        $uri = $childrenUri . $questionMark . ( $offset ? 'skipCount=' . $offset : '' ) . ( $limit ? '&maxItems=' . $limit : '' );
 
-        /**
-         * @HACK: Fixing 'Empty reply from server' in Nuxeo.
-         *        Try to fetch children using paging.
-         *        If could not try without it.
-         */
-        try
-        {
-            $response = nxcCMISUtils::invokeService( $uri );
-        }
-        catch ( Exception $error )
-        {
-            $response = nxcCMISUtils::invokeService( $childrenUri );
-        }
-
+        $response = nxcCMISUtils::invokeService( $uri );
         $entry = nxcCMISUtils::fetchEntries( $response );
 
         if ( isset( $entry[0] ) )

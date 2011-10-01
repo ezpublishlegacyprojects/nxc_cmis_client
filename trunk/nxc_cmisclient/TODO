@@ -1,8 +1,0 @@
-9.07.09
-======
-- Add login page to upload/browse mode in ezoe.
-- Bug: if click to 'switch to embed objects' while uploading image, CMIS location is not shown.
-
-1.06.09
-=======
-- Add "move to" feature
