@@ -23,6 +23,17 @@
  * Functions to support Alfresco in ezoe
  */
 
+// In ezp 4.4.0 ezoe does not have ajax and uses jQuery.ez instead
+if ( typeof eZOEPopupUtils.ajax == 'undefined' )
+{
+    eZOEPopupUtils.ajax = ez.ajax( { 'charset': 'UTF-8' } );
+}
+
+if ( typeof eZOEPopupUtils.ajaxLoadResponse == 'undefined' )
+{
+    eZOEPopupUtils.ajaxLoadResponse = '';
+}
+
 /**
  * Generates link to cmis objects in subitems
  */
@@ -231,4 +242,3 @@ eZOEPopupUtils.cmisBrowseCallBack = function( r, mode, emptyCallBack )
 
     return false;
 };
-
