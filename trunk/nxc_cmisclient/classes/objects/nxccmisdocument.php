@@ -175,6 +175,14 @@ class nxcCMISDocument extends nxcCMISBaseObject
     }
 
     /**
+     * @reimp
+     */
+    public function getDocType()
+    {
+        return $this->DocType;
+    }
+
+    /**
      * Provides content. If it does not exist fetch from repository
      *
      * @return byte[] Object content
@@ -183,9 +191,9 @@ class nxcCMISDocument extends nxcCMISBaseObject
     {
         if ( $force or !$this->Content )
         {
-            $this->Content = nxcCMISUtils::invokeService( nxcCMISUtils::getDecodedUri( $this->StreamUri ) );
+            $decodedUri = nxcCMISUtils::getDecodedUri( $this->StreamUri );
+            $this->Content = nxcCMISUtils::invokeService( $decodedUri );
         }
-
         return $this->Content;
     }
 

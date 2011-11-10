@@ -28,6 +28,7 @@
 
 $Module = $Params['Module'];
 $objectKey = nxcCMISUtils::getDecodedUri( implode( '/', $Module->ViewParameters ) );
+
 if ( !$objectKey )
 {
     eZDebug::writeError( 'Object key is not set' );
@@ -42,6 +43,8 @@ try
     {
         return $Module->handleError( eZError::KERNEL_NOT_AVAILABLE, 'kernel' );
     }
+    if( strpos( $object->getDocType(  ), "image" ) !== false )
+        header( 'Content-type: $object->getDocType()');
 
     echo $object->getContent();
 

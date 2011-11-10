@@ -88,7 +88,7 @@ if ( $http->hasPostVariable( 'ConfirmButton' ) )
         $canFetch = eZHTTPFile::canFetch( $attrName );
         if ( !$selfUri and !$canFetch )
         {
-            $error = ezi18n( 'cmis', 'Could not fetch file by name: %name', false, array( '%name' => $name ) );
+            $error = ezpI18n::tr( 'cmis', 'Could not fetch file by name: %name', false, array( '%name' => $name ) );
             $errorList[] = $error;
 
             eZDebug::writeError( $error, $Module->functionURI( 'create' ) );
@@ -116,12 +116,11 @@ if ( $http->hasPostVariable( 'ConfirmButton' ) )
         {
             $editObject->setSelfUri( $selfUri );
         }
-
         try
         {
             if ( !$editObject->store( $parentChildrenURI ) )
             {
-                $errorList[] = ezi18n( 'cmis', 'Could not store %name object', false, array( '%name' => $classID ) );
+                $errorList[] = ezpI18n::tr( 'cmis', 'Could not store %name object', false, array( '%name' => $classID ) );
             }
             else
             {
@@ -143,7 +142,7 @@ if ( $http->hasPostVariable( 'ConfirmButton' ) )
     }
     else
     {
-        $errorList[] = ezi18n( 'cmis', 'No object created' );
+        $errorList[] = ezpI18n::tr( 'cmis', 'No object created' );
     }
 
     if ( !count( $errorList ) )
@@ -214,6 +213,6 @@ $Result = array();
 $Result['content'] = $tpl->fetch( 'design:cmis_client/edit/' . strtolower( $classID ) . '.tpl' );
 $Result['left_menu'] = 'design:cmis_client/cmis_menu.tpl';
 $Result['path'] = array( array( 'url' => false,
-                                'text' => $objectKey ? ezi18n( 'kernel/content', 'Edit object' ) : ezi18n( 'kernel/content', 'Create object' ) ) );
+                                'text' => $objectKey ? ezpI18n::tr( 'kernel/content', 'Edit object' ) : ezpI18n::tr( 'kernel/content', 'Create object' ) ) );
 
 ?>

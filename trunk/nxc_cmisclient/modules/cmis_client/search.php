@@ -73,6 +73,6 @@ $Result = array();
 
 $Result['content'] = $tpl->fetch( "design:cmis_client/search.tpl" );
 $Result['left_menu'] = 'design:cmis_client/cmis_menu.tpl';
-$Result['path'] = array( array( 'text' => ezi18n( 'kernel/content', 'Search' ),
+$Result['path'] = array( array( 'text' => ezpI18n::tr( 'kernel/content', 'Search' ),
                                 'url' => false ) );
 ?>

@@ -67,7 +67,7 @@ if ( $http->hasPostVariable( 'ConfirmButton' ) )
             }
             else
             {
-                $errorList[] = ezi18n( 'cmis', 'Failed to remove "%name"', false, array( '%name' => $object ? $object->getTitle() : $objectURI ) );
+                $errorList[] = ezpI18n::tr( 'cmis', 'Failed to remove "%name"', false, array( '%name' => $object ? $object->getTitle() : $objectURI ) );
             }
         }
         catch ( Exception $error )
@@ -121,6 +121,6 @@ $Result = array();
 $Result['content'] = $tpl->fetch( "design:cmis_client/remove.tpl" );
 $Result['left_menu'] = 'design:cmis_client/cmis_menu.tpl';
 $Result['path'] = array( array( 'url' => false,
-                                'text' => ezi18n( 'kernel/content', 'Remove object' ) ) );
+                                'text' => ezpI18n::tr( 'kernel/content', 'Remove object' ) ) );
 
 ?>

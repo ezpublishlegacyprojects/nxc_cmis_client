@@ -43,7 +43,7 @@ $uri = isset( $userParameters['uri'] ) ? $userParameters['uri'] : false;
 if ( !$uri )
 {
     header( 'HTTP/1.0 500 Internal Server Error' );
-    echo ezi18n( 'design/standard/ezoe', 'Invalid or missing parameter: %parameter', null, array( '%parameter' => 'uri' ) );
+    echo ezpI18n::tr( 'design/standard/ezoe', 'Invalid or missing parameter: %parameter', null, array( '%parameter' => 'uri' ) );
     eZExecution::cleanExit();
 }
 
@@ -54,7 +54,7 @@ try
     if ( !$object )
     {
         header( 'HTTP/1.0 500 Internal Server Error' );
-        echo ezi18n( 'cmis', 'Could not fetch eZContentObject by cmis object id: %key', null, array( '%key' => $uri ) );
+        echo ezpI18n::tr( 'cmis', 'Could not fetch eZContentObject by cmis object id: %key', null, array( '%key' => $uri ) );
         eZExecution::cleanExit();
     }
 

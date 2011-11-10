@@ -234,7 +234,7 @@ class nxcCMISObjectHandler
 
         if ( !class_exists( $className ) )
         {
-            throw new Exception( ezi18n( 'cmis', "Class '%class%' does not exist", null, array( '%class%' => $className ) ) );
+            throw new Exception( ezpI18n::tr( 'cmis', "Class '%class%' does not exist", null, array( '%class%' => $className ) ) );
         }
 
         return new $className();
@@ -258,7 +258,7 @@ class nxcCMISObjectHandler
 
         if ( empty( $baseType ) )
         {
-            throw new Exception( ezi18n( 'cmis', "Could not fetch 'BaseType'" ) );
+            throw new Exception( ezpI18n::tr( 'cmis', "Could not fetch 'BaseType'" ) );
         }
 
         $object = self::createObjectByBaseType( nxcCMISUtils::removeNamespaces( $baseType ) );
@@ -378,10 +378,10 @@ class nxcCMISObjectHandler
     public static function getCreateClasses()
     {
         // Define classes that can be created in "Create here" feature
-        $canCreateClasses = array( 'content' => ezi18n( 'cmis', 'Content' ), 'folder' => ezi18n( 'cmis', 'Folder' ) );
+        $canCreateClasses = array( 'content' => ezpI18n::tr( 'cmis', 'Content' ), 'folder' => ezpI18n::tr( 'cmis', 'Folder' ) );
         if ( ini_get( 'file_uploads' ) != 0 )
         {
-            $canCreateClasses['file'] = ezi18n( 'cmis', 'File' );
+            $canCreateClasses['file'] = ezpI18n::tr( 'cmis', 'File' );
         }
 
         return $canCreateClasses;

@@ -176,7 +176,6 @@ class nxcCMISUtils
     public static function invokeService( $url, $method = 'GET', $headers = array(), $data = null )
     {
         $name = __METHOD__ . '_' . $url . '_' . $method . '_' . implode( '_', $headers ) . '_' . $data;
-
         if ( isset( $GLOBALS[$name] ) )
         {
             return $GLOBALS[$name];
@@ -187,13 +186,11 @@ class nxcCMISUtils
         {
             $url = self::getHost( self::getEndPoint() ) . $url;
         }
-
         $response = self::httpRequest( $url, $method, $headers, $data );
 
         if ( $response->code == 200 or $response->code == 201 )
         {
             $GLOBALS[$name] = $response->data;
-
             return $response->data;
         }
         elseif ( $response->code == 204 )
@@ -202,7 +199,7 @@ class nxcCMISUtils
         }
         elseif ( in_array( $response->code, array( 403, 401, 302 ) ) )
         {
-            throw new Exception( ezi18n( 'cmis', 'Access denied' ), 403 );
+            throw new Exception( ezpI18n::tr( eZExtension::baseDirectory() . '/nxc_cmisclient/', 'cmis', 'Access denied' ), 403 );
         }
 
         $error = 'Failed to invoke service [' . $method . '] ' . self::getHostlessUri( $url ) . ' Code:' . $response->code . "\n" . $response->error;
@@ -219,6 +216,7 @@ class nxcCMISUtils
      */
     public static function httpRequest( $url, $method = 'GET', $headers = array(), $data = null )
     {
+
         // Prepare curl session
         $session = curl_init( $url );
         curl_setopt( $session, CURLOPT_VERBOSE, 1 );
@@ -313,7 +311,7 @@ class nxcCMISUtils
          $repoInfo = self::processXML( $response, self::getVersionSpecificValue( '/app:service/app:workspace/cmisra:repositoryInfo' ) );
          if ( !isset( $repoInfo[0] ) )
          {
-             throw new Exception( ezi18n( 'cmis', 'Could not fetch repository info:'  ) . "\n$response" );
+             throw new Exception( ezpI18n::tr( eZExtension::baseDirectory() . '/nxc/cmisclient/', 'cmis', 'Could not fetch repository info:'  ) . "\n$response" );
          }
 
          $collectionRootChildren = self::processXML( $response, self::getVersionSpecificCollection( self::getVersionSpecificValue( 'root' ) ) );
@@ -363,7 +361,7 @@ class nxcCMISUtils
 
          if ( !isset( $repositoryInfo->rootFolderId ) )
          {
-             throw new Exception( ezi18n( 'cmis', "Could not fetch 'rootFolderId' from repository info" ) );
+             throw new Exception( ezpI18n( eZExtension::baseDirectory() . '/nxc_cmisclient/', 'cmis', "Could not fetch 'rootFolderId' from repository info" ) );
          }
 
          return $repositoryInfo->rootFolderId;
@@ -379,7 +377,7 @@ class nxcCMISUtils
          $cmisTypes = self::getCMISTypes();
          if ( !isset( $cmisTypes[$objectTypeId] ) )
          {
-             throw new Exception( ezi18n( 'cmis', 'Unknown ObjectTypeId:'  ) . " '$objectTypeId'" );
+             throw new Exception( ezpI18n::tr( eZExtension::baseDirectory() . '/nxc_cmisclient/', 'cmis', 'Unknown ObjectTypeId:'  ) . " '$objectTypeId'" );
          }
 
          return $cmisTypes[$objectTypeId];
@@ -689,7 +687,6 @@ class nxcCMISUtils
          {
              $cmisService->registerXPathNamespace( $ns, $value );
          }
-
          return $cmisService->xpath( $xpath );
      }
 

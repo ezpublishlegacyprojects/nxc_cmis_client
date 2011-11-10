@@ -46,7 +46,7 @@ $parentChildrenUri = isset( $exploded[1] ) ? nxcCMISUtils::getDecodedUri( $explo
 if ( !$parentChildrenUri )
 {
     header( 'HTTP/1.0 500 Internal Server Error' );
-    echo ezi18n( 'design/standard/ezoe', 'Invalid or missing parameter: %parameter', null, array( '%parameter' => 'parent children uri' ) );
+    echo ezpI18n::tr( 'design/standard/ezoe', 'Invalid or missing parameter: %parameter', null, array( '%parameter' => 'parent children uri' ) );
     eZExecution::cleanExit();
 }
 
@@ -55,7 +55,7 @@ $result = ( $user instanceOf eZUser ) ? $user->hasAccessTo( 'ezoe', 'relations' 
 
 if ( $result['accessWord'] == 'no' )
 {
-   echo ezi18n( 'design/standard/error/kernel', 'Your current user does not have the proper privileges to access this page.' );
+   echo ezpI18n::tr( 'design/standard/error/kernel', 'Your current user does not have the proper privileges to access this page.' );
    eZExecution::cleanExit();
 }
 
@@ -73,7 +73,7 @@ if ( $http->hasPostVariable( 'uploadButton' ) or $forcedUpload )
     $canFetch = eZHTTPFile::canFetch( $attrName );
     if ( !$canFetch )
     {
-        $errorList[] = ezi18n( 'cmis', 'Could not fetch file by name: %name', false, array( '%name' => $name ) );
+        $errorList[] = ezpI18n::tr( 'cmis', 'Could not fetch file by name: %name', false, array( '%name' => $name ) );
     }
 
     if ( $canFetch and !count( $errorList ) )
@@ -98,7 +98,7 @@ if ( $http->hasPostVariable( 'uploadButton' ) or $forcedUpload )
             }
             else
             {
-                $errorList[] = ezi18n( 'cmis', 'Could not store %name', false, array( '%name' => 'file' ) );
+                $errorList[] = ezpI18n::tr( 'cmis', 'Could not store %name', false, array( '%name' => 'file' ) );
             }
         }
         catch ( Exception $error )

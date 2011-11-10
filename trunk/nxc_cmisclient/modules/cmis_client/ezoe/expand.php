@@ -40,7 +40,7 @@ try
     if ( !$object->hasObject() )
     {
         header( 'HTTP/1.0 500 Internal Server Error' );
-        echo ezi18n( 'cmis', 'Could not fetch cmis object by uri %uri%', null, array( '%uri%' => $uri ) );
+        echo ezpI18n::tr( 'cmis', 'Could not fetch cmis object by uri %uri%', null, array( '%uri%' => $uri ) );
         eZExecution::cleanExit();
     }
 

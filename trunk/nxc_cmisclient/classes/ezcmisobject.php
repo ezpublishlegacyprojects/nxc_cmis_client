@@ -109,7 +109,7 @@ class eZCMISObject
         $class = eZContentClass::fetchByIdentifier( $classIdentifier );
         if ( !$class )
         {
-            throw new Exception( ezi18n( 'cmis', "Could not fetch class by identifier '%class%'", null, array( '%class%' => $classIdentifier ) ) );
+            throw new Exception( ezpI18n::tr( 'cmis', "Could not fetch class by identifier '%class%'", null, array( '%class%' => $classIdentifier ) ) );
         }
 
         $contentObject = self::fetch( $uri, $parentNodeID, $classIdentifier );
@@ -122,7 +122,7 @@ class eZCMISObject
 
         if ( !$contentObject )
         {
-            throw new Exception( ezi18n( 'cmis', "Could not instatiate content object by class identifier '%class%'", null, array( '%class%' => $classIdentifier ) ) );
+            throw new Exception( ezpI18n::tr( 'cmis', "Could not instatiate content object by class identifier '%class%'", null, array( '%class%' => $classIdentifier ) ) );
         }
 
         $version = $contentObject->attribute( 'current_version' );
@@ -203,6 +203,7 @@ class eZCMISObject
         self::updateAttributes( $contentObject, array( 'title' => $cmisObject->getTitle() ) );
 
         $contentObject->setName( $cmisObject->getTitle() );
+
         $contentObject->store();
 
         $node = $contentObject->mainNode();
